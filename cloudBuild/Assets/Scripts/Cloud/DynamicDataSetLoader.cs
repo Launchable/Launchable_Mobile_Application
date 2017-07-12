@@ -1,0 +1,113 @@
+﻿using UnityEngine;
+using System.Collections;
+using System.IO;
+using Vuforia;
+using System.Collections.Generic;
+using UnityEngine.UI;
+
+ 
+public class DynamicDataSetLoader : MonoBehaviour
+{
+    // specify these in Unity Inspector
+    public GameObject augmentationObject = null;  // you can use teapot or other object
+    public string dataSetName = "leadingEstates.xml";  //  Assets/StreamingAssets/QCAR/DataSetName
+	public string currentTrackable = "none";
+ 
+	string streamPath;
+	
+    // Use this for initialization
+    void Start()
+    {
+		streamPath = Application.persistentDataPath + "/";
+	#if UNITY_IOS
+		streamPath += "Library/Application Support/";
+	#endif
+        VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
+		updateDatabase();
+    }
+         	
+	void updateDatabase () {
+		print("updating database");
+		downloadFiles();
+	}
+	
+	void downloadFiles(){
+		string[] urls =  {"https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_1.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_1_scaled.jpg", 
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_2.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_2_scaled.jpg", 
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_3.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_3_scaled.jpg", 
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_4.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_4_scaled.jpg", 
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/leadingEstates.dat", 
+						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/leadingEstates.xml"};
+		foreach(string url in urls){
+			StartCoroutine(downloadFile(url));
+		}
+	}
+	
+	IEnumerator downloadFile(string url){
+		string[] splitURL = url.Split('/');
+		string fileName =  splitURL[splitURL.Length - 1];
+		WWW www = new WWW(url);
+		yield return www;
+		string savePath = streamPath + fileName;
+
+		File.WriteAllBytes(savePath, www.bytes);
+	}
+	
+    void LoadDataSet()
+    {
+        ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
+         
+        DataSet dataSet = objectTracker.CreateDataSet();
+		
+		string dataSetPath = streamPath + dataSetName + ".xml";
+
+		if(!Directory.Exists(streamPath)){
+			Directory.CreateDirectory(streamPath);
+		}
+		
+        if (dataSet.Load(dataSetPath, VuforiaUnity.StorageType.STORAGE_ABSOLUTE)) {
+             
+            objectTracker.Stop();  // stop tracker so that we can add new dataset
+ 
+            if (!objectTracker.ActivateDataSet(dataSet)) {
+                // Note: ImageTracker cannot have more than 100 total targets activated
+				
+                Debug.Log("<color=yellow>Failed to Activate DataSet: " + dataSetName + "</color>");
+            }
+ 
+            if (!objectTracker.Start()) {
+                Debug.Log("<color=yellow>Tracker Failed to Start.</color>");
+            }
+ 
+            int counter = 0;
+ 
+            IEnumerable<TrackableBehaviour> tbs = TrackerManager.Instance.GetStateManager().GetTrackableBehaviours();
+            foreach (TrackableBehaviour tb in tbs) {
+                if (tb.name == "New Game Object") {
+ 
+                    // change generic name to include trackable name
+                    tb.gameObject.name = ++counter + ":DynamicImageTarget-" + tb.TrackableName;
+ 
+                    // add additional script components for trackable
+                    tb.gameObject.AddComponent<DefaultTrackableEventHandler>();
+                    tb.gameObject.AddComponent<TurnOffBehaviour>();
+ 
+                    if (augmentationObject != null) {
+                        // instantiate augmentation object and parent to trackable
+                        GameObject augmentation = (GameObject)GameObject.Instantiate(augmentationObject);
+                        augmentation.transform.SetParent(tb.gameObject.transform,true);
+                        augmentation.gameObject.SetActive(true);
+                    } else {
+                        Debug.Log("<color=yellow>Warning: No augmentation object specified for: " + tb.TrackableName + "</color>");
+                    }
+                }
+            }
+        } else {
+            Debug.LogError("<color=red>Failed to load dataset: '" + dataSetName + "'</color>");
+		}
+	}
+}
