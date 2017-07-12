@@ -32,16 +32,29 @@ public class DynamicDataSetLoader : MonoBehaviour
 	}
 	
 	void downloadFiles(){
-		string[] urls =  {"https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_1.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_1_scaled.jpg", 
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_2.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_2_scaled.jpg", 
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_3.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_3_scaled.jpg", 
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_4.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/estate_4_scaled.jpg", 
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/leadingEstates.dat", 
-						  "https://s3-eu-west-1.amazonaws.com/launchables/estates/estateMetadata_Example/leadingEstates.xml"};
+		string[] urls =  {"https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/Launchable_Mobile_Application.dat",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/Launchable_Mobile_Application.xml", 
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_1.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_2.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_3.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_4.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_5.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_6.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_7.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_8.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_9.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_10.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_11.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_12.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_13.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_14.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_15.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_16.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_17.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_18.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_19.txt",
+						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_20.txt"
+						  };
 		foreach(string url in urls){
 			StartCoroutine(downloadFile(url));
 		}
@@ -64,7 +77,8 @@ public class DynamicDataSetLoader : MonoBehaviour
         DataSet dataSet = objectTracker.CreateDataSet();
 		
 		string dataSetPath = streamPath + dataSetName + ".xml";
-
+	
+		print("Loading: " + dataSetPath);
 		if(!Directory.Exists(streamPath)){
 			Directory.CreateDirectory(streamPath);
 		}
