@@ -1045,7 +1045,7 @@ GameObject:
   - component: {fileID: 1901877073}
   - component: {fileID: 1901877074}
   m_Layer: 0
-  m_Name: estateObject
+  m_Name: targetObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
