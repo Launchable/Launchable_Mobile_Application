@@ -12,7 +12,8 @@ public class DynamicDataSetLoader : MonoBehaviour
     public GameObject augmentationObject = null;  // you can use teapot or other object
     public string dataSetName = "leadingEstates.xml";  //  Assets/StreamingAssets/QCAR/DataSetName
 	public string currentTrackable = "none";
- 
+	public Text debugText;
+	
 	string streamPath;
 	
     // Use this for initialization
@@ -78,6 +79,9 @@ public class DynamicDataSetLoader : MonoBehaviour
 		
 		string dataSetPath = streamPath + dataSetName + ".xml";
 	
+		debugText.text = dataSetPath + "\n";
+		debugText.text += "Dir exists?" + Directory.Exists(streamPath) + "\n";
+		
 		print("Loading: " + dataSetPath);
 		if(!Directory.Exists(streamPath)){
 			Directory.CreateDirectory(streamPath);
@@ -121,6 +125,7 @@ public class DynamicDataSetLoader : MonoBehaviour
                 }
             }
         } else {
+			debugText.text += "<color=red>Failed to load dataset: '" + dataSetName + "'</color>";
             Debug.LogError("<color=red>Failed to load dataset: '" + dataSetName + "'</color>");
 		}
 	}

@@ -20,6 +20,8 @@ public class metadataParse : MonoBehaviour {
 	string estatesCover = "estates_1";
 	bool estateCard = false; //check if we should have contact card functionality
 	
+	public Text debugText;
+	
 	void Start(){
 		streamPath = Application.persistentDataPath + "/";
 	#if UNITY_IOS
@@ -47,27 +49,21 @@ public class metadataParse : MonoBehaviour {
 		string line;
 		while((line = metadataFile.ReadLine()) != null)
 		{
-				executeLineCommand(line);
+			executeLineCommand(line);
 		}
-		print("estate card: " + estateCard);
 		if(estateCard){	
 			transform.Find("Canvas").GetComponent<CanvasGroup>().alpha =1.0f;
 			//transform.Find("Quad").transform.position = new Vector3(0.35f,0.0f,0.74f);
-			print("move video up");		
 			transform.Find("Canvas").localScale = new Vector3(.00858262f,.00858262f,.00858262f);
 		}else{
 			transform.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0.0f;
 			transform.Find("Quad").transform.position = new Vector3(0.0f,0.0f,0.0f);
-			print("estate card disappear");
 		}
 		
 		metadataFile.Close();
 	}
 	
-	IEnumerator waitToPlay(){
-		yield return new WaitForSeconds(1f);
-		MPMPPlayback.Play();
-	}
+
 	
 	void executeLineCommand(string line){
 		string[] splitMetadata = line.Split(' ');
@@ -76,7 +72,8 @@ public class metadataParse : MonoBehaviour {
 		switch (splitMetadata[0])
 		{
           case "videoUrl":
-            loadVideo(splitMetadata[1]);
+			debugText.text += line;
+			loadVideo(splitMetadata[1]);
             break;
           case "3durl":
             load3dAsset(splitMetadata[1]);
@@ -125,7 +122,14 @@ public class metadataParse : MonoBehaviour {
 			//grab mpmp object and run the video from url
 			MPMPPlayback = transform.Find("MPMP.instance").GetComponent<MPMP>();
 			MPMPPlayback.Load(url);
+			debugText.text += "url loaded";
 			StartCoroutine(waitToPlay());
+	}
+	
+	IEnumerator waitToPlay(){
+		yield return new WaitForSeconds(1.5f);
+		MPMPPlayback.Play();
+		debugText.text += "url played";
 	}
 	
 	void load3dAsset(string url){
@@ -167,7 +171,6 @@ public class metadataParse : MonoBehaviour {
     }	
 	
 	public void resetCard(){
-		print("reseting");
 		transform.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0.0f;
 	}
 }
