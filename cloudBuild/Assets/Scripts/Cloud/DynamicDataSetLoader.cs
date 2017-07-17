@@ -73,6 +73,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 	
     void LoadDataSet()
     {
+		
         ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
          
         DataSet dataSet = objectTracker.CreateDataSet();
@@ -127,6 +128,6 @@ public class DynamicDataSetLoader : MonoBehaviour
         } else {
 			debugText.text += "<color=red>Failed to load dataset: '" + dataSetName + "'</color>";
             Debug.LogError("<color=red>Failed to load dataset: '" + dataSetName + "'</color>");
-		}
+	}
 	}
 }
