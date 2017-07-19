@@ -12,22 +12,23 @@ public class analyticsController : MonoBehaviour {
 		
 	}
 	
-	public void addAnalytic(string targetName){
+	public void addTargetFound(string targetName){
 		currentTarget = targetName;
 		StartCoroutine("targetLaunched");
 	}
 	
 	IEnumerator targetLaunched(){
-		WWW download = new WWW( launch_url+"/card"+currentTarget);
+		print("Instance of Target " + currentTarget + " added to analytics";
+		//WWW download = new WWW( launch_url+"/card"+currentTarget);
 
 		// Wait until the download is done
-		yield return download;
-
+		yield return null;//download;
+/*
 		if(!string.IsNullOrEmpty(download.error)) {
 			print( "Error downloading: " + download.error );
 		} else {
 			// show the highscores
 			Debug.Log(download.text);
-		}
+		}*/
 	}
 }

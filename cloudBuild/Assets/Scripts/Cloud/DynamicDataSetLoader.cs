@@ -23,12 +23,10 @@ public class DynamicDataSetLoader : MonoBehaviour
 	#if UNITY_IOS
 		streamPath += "Library/Application Support/";
 	#endif
-        VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
 		updateDatabase();
     }
          	
 	void updateDatabase () {
-		print("updating database");
 		downloadFiles();
 	}
 	
@@ -66,24 +64,28 @@ public class DynamicDataSetLoader : MonoBehaviour
 		string fileName =  splitURL[splitURL.Length - 1];
 		WWW www = new WWW(url);
 		yield return www;
+		debugText.text += "Downloaded " + fileName + "\n";
 		string savePath = streamPath + fileName;
 
 		File.WriteAllBytes(savePath, www.bytes);
+		
+		if(fileName == "Launchable_Mobile_Application.dat"){
+			debugText.text += "loading dataset \n";
+			VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
+		}
 	}
 	
     void LoadDataSet()
     {
-		
         ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
          
         DataSet dataSet = objectTracker.CreateDataSet();
 		
 		string dataSetPath = streamPath + dataSetName + ".xml";
 	
-		debugText.text = dataSetPath + "\n";
+		debugText.text += dataSetPath + "\n";
 		debugText.text += "Dir exists?" + Directory.Exists(streamPath) + "\n";
 		
-		print("Loading: " + dataSetPath);
 		if(!Directory.Exists(streamPath)){
 			Directory.CreateDirectory(streamPath);
 		}
