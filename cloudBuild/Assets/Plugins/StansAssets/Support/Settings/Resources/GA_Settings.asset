@@ -1,0 +1,40 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c68cbaeadf56b47f18bce1fdf7c9efe1, type: 3}
+  m_Name: GA_Settings
+  m_EditorClassIdentifier: 
+  accounts: []
+  platfromBounds: []
+  showAdditionalParams: 0
+  showAdvancedParams: 0
+  showCParams: 0
+  showAccounts: 1
+  showPlatfroms: 0
+  showTestingMode: 0
+  AppName: mobileApplicationBuild
+  AppVersion: 1.0
+  UseHTTPS: 0
+  StringEscaping: 1
+  EditorAnalytics: 1
+  IsDisabled: 0
+  IsTestingModeEnabled: 0
+  TestingModeAccIndex: 0
+  IsRequetsCachingEnabled: 1
+  IsQueueTimeEnabled: 1
+  AutoLevelTracking: 1
+  LevelPrefix: Level_
+  LevelPostfix: 
+  AutoAppQuitTracking: 1
+  AutoCampaignTracking: 0
+  AutoExceptionTracking: 1
+  AutoAppResumeTracking: 1
+  SubmitSystemInfoOnFirstLaunch: 1
+  UsePlayerSettingsForAppInfo: 1
