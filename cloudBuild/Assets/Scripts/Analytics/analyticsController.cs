@@ -18,7 +18,7 @@ public class analyticsController : MonoBehaviour {
 	}
 	
 	IEnumerator targetLaunched(){
-		print("Instance of Target " + currentTarget + " added to analytics";
+		print("Instance of Target " + currentTarget + " added to analytics");
 		//WWW download = new WWW( launch_url+"/card"+currentTarget);
 
 		// Wait until the download is done
