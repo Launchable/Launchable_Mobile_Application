@@ -93,7 +93,6 @@ namespace Vuforia
 			analyticsControl.launchTimeTrack(true);
 
 			if(targetControl.currentTrackable != trackableName){
-				analyticsControl.addTargetFound(trackableName);
 				targetControl.currentTrackable = trackableName;
 				mParser.resetCard();
 				mParser.loadMetadata(trackableName);
