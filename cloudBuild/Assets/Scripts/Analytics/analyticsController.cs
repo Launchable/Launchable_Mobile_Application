@@ -6,6 +6,7 @@ public class analyticsController : MonoBehaviour {
 	
 	string launch_url = "http://launchableURLhere.com/index.php/LaunchableApp/Launches";
 	string currentTarget;
+	float startTime;
 	
 	// Use this for initialization
 	void Start () {
@@ -18,7 +19,7 @@ public class analyticsController : MonoBehaviour {
 	}
 	
 	IEnumerator targetLaunched(){
-		print("Instance of Target " + currentTarget + " added to analytics");
+		print("<color=green>Instance of Target " + currentTarget + " added to analytics</color>");
 		//WWW download = new WWW( launch_url+"/card"+currentTarget);
 
 		// Wait until the download is done
@@ -31,4 +32,17 @@ public class analyticsController : MonoBehaviour {
 			Debug.Log(download.text);
 		}*/
 	}
+	
+	public void launchTimeTrack(bool toggle){
+		float trackedTime = 0;
+		
+		if(toggle){
+			startTime = Time.time;
+		}
+		else{
+			trackedTime = Time.time - startTime;
+			print("<color=green>Tracking Time for " + currentTarget + "is " + trackedTime + " seconds</color>");
+		}
+	}
+	
 }
