@@ -24,56 +24,65 @@ public class screenShotSharing_WORK : MonoBehaviour {
 
 	public GameObject ImageHolder;
 
-
-	public GameObject intro1;
-	public GameObject intro2;
-	public GameObject intro3;
+	public GameObject _PanelCoaching1;
+	public GameObject _PanelCoaching2;
+	public GameObject _PanelCoaching3;
 
 
 	private GUIStyle style;
 	private GUIStyle style2;
 
-	private Texture2D textureForPost;
-	private Texture2D tex = null;
-	private byte[] fileData;
+	private Texture2D screenCap;
+	private Texture2D border;
 
-	private bool check = false;
-
-
+  
 	/* --------------------------------------------------------------------------------------------------------- */
 
 	// defind all the things need to be done first
 	void Start() {
 
-//		activeInterface ();
-//		disableInterface();
-		displayMessage();
-		ImageHolder.SetActive (false);
 		InitStyles();
-	}
+		ImageHolder.SetActive (false);
+		screenCap = new Texture2D(Screen.width, Screen.height, TextureFormat.RGBA32, false); // 1
 
-	void Update()
-	{
-		if (Input.GetMouseButton (0)) {
-			noMessage ();
+		// only display the coaching once 
+		if (PlayerPrefs2.GetBool("messagesAlreadyShown"))
+		{
+			noUI ();
 		}
+		else
+		{
+			PlayerPrefs2.SetBool("messagesAlreadyShown", true);
+			SetupUI ();
+		}
+
 	}
+		
 
+	/* --------------------------------------------------------------------------------------------------------- */
 
-	private void displayMessage()
+	// define all coaching object activity
+	public void HideCoaching ()
 	{
-		intro1.gameObject.SetActive (true);
-		intro2.gameObject.SetActive (true);
-		intro3.gameObject.SetActive (true);
+		noUI ();
 	}
 
-	private void noMessage()
+	private void SetupUI ()
 	{
-		intro1.gameObject.SetActive (false);
-		intro2.gameObject.SetActive (false);
-		intro3.gameObject.SetActive (false);
+		_PanelCoaching1.SetActive (true);
+		_PanelCoaching2.SetActive (true);
+		_PanelCoaching3.SetActive (true);
 	}
 
+	private void noUI(){
+		_PanelCoaching1.SetActive (false);
+		_PanelCoaching2.SetActive (false);
+		_PanelCoaching3.SetActive (false);
+	}
+
+	/* --------------------------------------------------------------------------------------------------------- */
+
+	// define all buttons activity
 	private void disableInterface()
 	{
 		launchable.SetActive (false);
@@ -109,89 +118,30 @@ public class screenShotSharing_WORK : MonoBehaviour {
 
 	/* --------------------------------------------------------------------------------------------------------- */
 
-	// take screenshot and load it on screen using rawImage object
-	// before it got load to the screen diable interface and buttons
-	public void captureScreenShotLoadOnScreen()
+	// catch the screen shot and load it to the screen
+	public void captureScreen()
 	{
-		StartCoroutine (CaptureScreen ());
-//		noMessage ();
+		StartCoroutine ("Capture");
 	}
-		
-		
-	private IEnumerator CaptureScreen()
-	{
-		shot = "_" + "screenshot" + "_" + System.DateTime.Now.ToString ("yyyy_MM_dd_hh_mm_ss") + ".png";
-		newPath = Path.Combine (Application.persistentDataPath, shot);
-	
-		// Wait till the last possible moment before screen rendering to hide the UI
-		yield return null;
 
-		GameObject.Find("Canvas").GetComponent<Canvas>().enabled = false;
+	IEnumerator Capture(){
+
 		disableInterface ();
 		disableALLButtons ();
 
-		// Wait for screen rendering to complete
 		yield return new WaitForEndOfFrame();
 
-		// Take screenshot
-		if (Application.platform == RuntimePlatform.IPhonePlayer) {
-			Application.CaptureScreenshot (shot);
-			print ("got the shot 1!");
-			check = true;
+		screenCap.ReadPixels(new Rect(0, 0, Screen.width, Screen.height), 0, 0);
+		screenCap.Apply ();
 
-		} else {
-			Application.CaptureScreenshot (newPath);
-			print ("got the shot 2!");
-			check = true;
-
-		}
-			
-		GameObject.Find("Canvas").GetComponent<Canvas>().enabled = true;
-		disableInterface ();
-		bt1.gameObject.SetActive (false);
-	
-//		Debug.Log (Directory.GetFiles (newPath));
-
+		ImageHolder.SetActive (true);
+		ImageHolder.GetComponent<RawImage> ().texture = screenCap;
 
 		yield return new WaitForEndOfFrame();
-		print ("another frame passed");
 
-		if (check == true) {
-			print ("SO TRUEEEEEEE");
-			yield return new WaitForSeconds (1f);
-
-			if (File.Exists (shot)) {
-				print ("i found it");
-
-				fileData = File.ReadAllBytes (newPath);
-
-//				yield return new WaitForSeconds (0.2f);
-
-				tex = new Texture2D (2, 2, TextureFormat.RGB24, false);
-				tex.filterMode = FilterMode.Trilinear;
-				textureForPost = tex;
-
-				tex.LoadImage (fileData); //..this will auto-resize the texture dimensions.
-				ImageHolder.SetActive (true);
-				ImageHolder.GetComponent<RawImage> ().texture = tex;
-
-				activeSomeButtons ();
-
-			} 
-			if (File.Exists (newPath)) {
-				File.Delete (newPath);
-				print ("let me delete it since i got it already");
-				check = false;
-			}
-			else 
-			{
-				bt1.gameObject.SetActive (true);
-			}
-		}
-
+		activeSomeButtons ();
 	}
-
-		
+				
 	/* --------------------------------------------------------------------------------------------------------- */
 
 	// diable all the buttons and interface
@@ -201,7 +151,7 @@ public class screenShotSharing_WORK : MonoBehaviour {
 		disableALLButtons ();
 	}
 
-	// save screensho to the gallery
+	// save screenshot to the gallery
 	public void savePicToGallery(){
 		UM_Camera.Instance.OnImageSaved += OnImageSaved;
 		UM_Camera.Instance.SaveScreenshotToGallery();
@@ -229,7 +179,7 @@ public class screenShotSharing_WORK : MonoBehaviour {
 
 	/* --------------------------------------------------------------------------------------------------------- */
 
-	// back to the beginning interface
+	// go back to the interface
 	public void backToInterface()
 	{
 		activeInterface ();
@@ -242,13 +192,15 @@ public class screenShotSharing_WORK : MonoBehaviour {
 		bt5.gameObject.SetActive (false);
 
 	}
-		
+
+	// facebook sharing
 	public void postTextureFB(){
-		UM_ShareUtility.FacebookShare("#Launchable #AR", textureForPost);
+		UM_ShareUtility.FacebookShare("#Launchable #AR", screenCap);
 	}
 
+	// twitter sharing
 	public void postTextureTwitter() {
-		UM_ShareUtility.TwitterShare("#Launchable #AR", textureForPost);
+		UM_ShareUtility.TwitterShare("#Launchable #AR", screenCap);
 	}
 		
 	private void InitStyles () {
