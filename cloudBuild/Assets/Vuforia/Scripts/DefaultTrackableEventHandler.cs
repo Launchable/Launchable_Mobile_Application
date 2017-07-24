@@ -21,6 +21,7 @@ namespace Vuforia
         #endregion // PRIVATE_MEMBER_VARIABLES
 		metadataParse mParser;
 		DynamicDataSetLoader targetControl;
+		analyticsController analyticsControl;
 
         #region UNTIY_MONOBEHAVIOUR_METHODS
     
@@ -28,6 +29,8 @@ namespace Vuforia
         {
 			mParser = transform.Find("targetObject(Clone)").GetComponent<metadataParse> ();
 			targetControl = GameObject.FindObjectOfType<DynamicDataSetLoader> ();
+			analyticsControl = GameObject.FindObjectOfType<analyticsController> ();
+
             mTrackableBehaviour = GetComponent<TrackableBehaviour>();
             if (mTrackableBehaviour)
             {
@@ -86,10 +89,13 @@ namespace Vuforia
             }
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
-			if(targetControl.currentTrackable != mTrackableBehaviour.TrackableName){
-				targetControl.currentTrackable = mTrackableBehaviour.TrackableName;
+			string trackableName = mTrackableBehaviour.TrackableName;
+			analyticsControl.launchTimeTrack(true);
+
+			if(targetControl.currentTrackable != trackableName){
+				targetControl.currentTrackable = trackableName;
 				mParser.resetCard();
-				mParser.loadMetadata(mTrackableBehaviour.TrackableName);
+				mParser.loadMetadata(trackableName);
 			}
         }
 
@@ -110,6 +116,7 @@ namespace Vuforia
             {
                 component.enabled = false;
             }
+			analyticsControl.launchTimeTrack(false);
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
         }

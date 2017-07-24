@@ -23,6 +23,7 @@ public class metadataParse : MonoBehaviour {
 	string estatesCover = "estates_1";
 	bool estateCard = false; //check if we should have contact card functionality
 	
+	analyticsController analyticsControl;
 	public Text debugText;
 
 
@@ -37,12 +38,12 @@ public class metadataParse : MonoBehaviour {
 	#if UNITY_IOS
 		streamPath += "Library/Application Support/";
 	#endif
+		analyticsControl = GameObject.FindObjectOfType<analyticsController> ();
 	}
 	
 	//gets target name from defaultTrackableEventHandler and finds the metadata file
 	public void loadMetadata(string metadataFile){
 		if(metadataFile == estatesCover){
-			
 			return;
 		}
 		string metadataPath = streamPath + metadataFile+".txt";
@@ -85,11 +86,12 @@ public class metadataParse : MonoBehaviour {
 		
 		switch (splitMetadata[0])
 		{
-		case "videoUrl":
-			// load the url link and make the videotexture object appear
-			debugText.text += line;
-			loadVideo (splitMetadata [1]);
-			videoTex.transform.localScale = new Vector3 (1f, 1f, 1f);
+		  case "name":
+				analyticsControl.addTargetFound(targetName + " - " + splitMetadata[1]);
+			break;
+          case "videoUrl":
+			      loadVideo (splitMetadata [1]);
+			      videoTex.transform.localScale = new Vector3 (1f, 1f, 1f);
 //			StartCoroutine (splitMetadata [1]);
 //			trying = splitMetadata [1];
             break;
