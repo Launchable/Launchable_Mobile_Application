@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using System.IO;
 using UnityEngine.Video;
+using System;
 
 public class metadataParse : MonoBehaviour {
 	
@@ -69,12 +70,10 @@ public class metadataParse : MonoBehaviour {
 		}
 		if(estateCard){	
 			transform.Find("Canvas").GetComponent<CanvasGroup>().alpha =1.0f;
-			//transform.Find("Quad").transform.position = new Vector3(0.35f,0.0f,0.74f);
 			transform.Find("Canvas").localScale = new Vector3(.00858262f,.00858262f,.00858262f);
 
 		}else{
 			transform.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0.0f;
-//			transform.Find("Quad").transform.position = new Vector3(0.0f,0.0f,0.0f);
 		}
 		
 		metadataFile.Close();
@@ -92,9 +91,13 @@ public class metadataParse : MonoBehaviour {
           case "videoUrl":
 			      loadVideo (splitMetadata [1]);
 			      videoTex.transform.localScale = new Vector3 (1f, 1f, 1f);
-//			StartCoroutine (splitMetadata [1]);
-//			trying = splitMetadata [1];
             break;
+		  case "videoTranslateX":
+			transform.Find("videoCanvas/videoTexture").transform.position = new Vector3(Convert.ToSingle(splitMetadata[1]),0.0f,0.0f);
+			break;
+		  case "videoTranslateY":
+			transform.Find("videoCanvas/videoTexture").transform.position = new Vector3(0.0f,0.0f,Convert.ToSingle(splitMetadata[1]));
+			break;
           case "3durl":
             load3dAsset(splitMetadata[1]);
             break;

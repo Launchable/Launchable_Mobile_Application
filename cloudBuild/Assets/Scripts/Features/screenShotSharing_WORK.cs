@@ -35,7 +35,8 @@ public class screenShotSharing_WORK : MonoBehaviour {
 	private Texture2D screenCap;
 	private Texture2D border;
 
-  
+	analyticsController analyticsControl;
+			
 	/* --------------------------------------------------------------------------------------------------------- */
 
 	// defind all the things need to be done first
@@ -44,7 +45,7 @@ public class screenShotSharing_WORK : MonoBehaviour {
 		InitStyles();
 		ImageHolder.SetActive (false);
 		screenCap = new Texture2D(Screen.width, Screen.height, TextureFormat.RGBA32, false); // 1
-
+		analyticsControl = GameObject.FindObjectOfType<analyticsController> ();
 		// only display the coaching once 
 		if (PlayerPrefs2.GetBool("messagesAlreadyShown"))
 		{
@@ -136,7 +137,8 @@ public class screenShotSharing_WORK : MonoBehaviour {
 
 		ImageHolder.SetActive (true);
 		ImageHolder.GetComponent<RawImage> ().texture = screenCap;
-
+		analyticsControl.screenshotTaken();
+		
 		yield return new WaitForEndOfFrame();
 
 		activeSomeButtons ();
@@ -196,11 +198,13 @@ public class screenShotSharing_WORK : MonoBehaviour {
 	// facebook sharing
 	public void postTextureFB(){
 		UM_ShareUtility.FacebookShare("#Launchable #AR", screenCap);
+		analyticsControl.screenshotShare("facebook");
 	}
 
 	// twitter sharing
 	public void postTextureTwitter() {
 		UM_ShareUtility.TwitterShare("#Launchable #AR", screenCap);
+		analyticsControl.screenshotShare("twitter");
 	}
 		
 	private void InitStyles () {
