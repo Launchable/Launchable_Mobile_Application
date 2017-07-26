@@ -27,7 +27,6 @@ public class metadataParse : MonoBehaviour {
 	analyticsController analyticsControl;
 	public Text debugText;
 
-
 	private RawImage videoTex;
 	// unity video player objects
 	private VideoPlayer videoPlayer;
@@ -90,13 +89,15 @@ public class metadataParse : MonoBehaviour {
 			break;
           case "videoUrl":
 			      loadVideo (splitMetadata [1]);
-			      videoTex.transform.localScale = new Vector3 (1f, 1f, 1f);
             break;
 		  case "videoTranslateX":
 			transform.Find("videoCanvas/videoTexture").transform.position = new Vector3(Convert.ToSingle(splitMetadata[1]),0.0f,0.0f);
 			break;
 		  case "videoTranslateY":
 			transform.Find("videoCanvas/videoTexture").transform.position = new Vector3(0.0f,0.0f,Convert.ToSingle(splitMetadata[1]));
+			break;
+		  case "videoResize":
+			transform.Find("videoCanvas/videoTexture").transform.localScale = new Vector3(Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]));
 			break;
           case "3durl":
             load3dAsset(splitMetadata[1]);
@@ -136,21 +137,13 @@ public class metadataParse : MonoBehaviour {
 		}
 
 	}
-		
+	
+	void LateUpdate(){
+	}
+
 
 	void loadVideo(string url){
-	
-		//the quad mesh render turns off for some reason so I'm turning it back on as a temporary fix until we figure out why it does that
-//			MeshRenderer quadMeshRender = transform.Find("Quad").GetComponent<MeshRenderer>();
-//			quadMeshRender.enabled = true;
-//			
-//			//grab mpmp object and run the video from url
-//			MPMPPlayback = transform.Find("MPMP.instance").GetComponent<MPMP>();
-//			MPMPPlayback.Load(url);
-//			debugText.text += "url loaded";
-//			StartCoroutine(waitToPlay());
-//		Application.runInBackground = true;
-
+		videoTex.transform.localScale = new Vector3 (1f, 1f, 1f);
 		// start streaming the video from url link
 		StartCoroutine(playVideo(url));
 	}

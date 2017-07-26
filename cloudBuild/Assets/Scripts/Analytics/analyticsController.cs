@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class analyticsController : MonoBehaviour {
 	
-	string launch_url = "http://launchableURLhere.com/index.php/LaunchableApp/Launches";
+	string launch_url = "http://13.59.240.48/methods/test";
 	string currentTarget;
 	float startTime = 0f;
 	
@@ -15,23 +15,20 @@ public class analyticsController : MonoBehaviour {
 	
 	public void addTargetFound(string targetName){
 		currentTarget = targetName;
-		string url = launch_url+"/card"+currentTarget;
-		StartCoroutine(uploadAnalytics(url));
 	}
 	
-	IEnumerator uploadAnalytics(string url){
-		print("<color=green>Analytics added: " + url + "</color>");
-		//WWW download = new WWW( url);
+	IEnumerator uploadAnalytics(WWWForm uploadData){
+		WWW download = new WWW( launch_url, uploadData);
 
 		// Wait until the download is done
-		yield return null;//download;
-/*
+		yield return download;
+
 		if(!string.IsNullOrEmpty(download.error)) {
 			print( "Error downloading: " + download.error );
 		} else {
 			// show the highscores
 			Debug.Log(download.text);
-		}*/
+		}
 	}
 	
 	public void launchTimeTrack(bool toggle){
@@ -43,24 +40,31 @@ public class analyticsController : MonoBehaviour {
 		else{
 			if(startTime > 0.1f){
 				trackedTime = Time.time - startTime;
-				string url = launch_url+"/track"+currentTarget+trackedTime.ToString();
-				StartCoroutine(uploadAnalytics(url));
+				WWWForm form = new WWWForm();
+				form.AddField("target","" + currentTarget);
+				form.AddField("duration",trackedTime.ToString());
+				StartCoroutine(uploadAnalytics(form));
 			}
 		}
 	}
 	
 	public void screenshotTaken(){
-		string url = launch_url+"/screenshot"+currentTarget;
-		StartCoroutine(uploadAnalytics(url));
+		WWWForm form = new WWWForm();
+		form.AddField("target","" + currentTarget);
+		form.AddField("screenshotTaken","true");
+		StartCoroutine(uploadAnalytics(form));
 	}
 	
 	public void screenshotShare(string platform){
-		string url;
+		WWWForm form = new WWWForm();
+		form.AddField("target","" + currentTarget);
 		if(platform == "twitter"){
-			url = launch_url+"/screenshot"+platform + currentTarget;
+			form.AddField("share","twitter");
 		}
-		else url = launch_url+"/screenshot"+platform + currentTarget;
-			
-		StartCoroutine(uploadAnalytics(url));
+		else {
+			form.AddField("share","facebook");
+		}
+		
+		StartCoroutine(uploadAnalytics(form));
 	}
 }
