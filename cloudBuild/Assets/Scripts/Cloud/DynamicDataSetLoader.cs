@@ -24,6 +24,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 		streamPath += "Library/Application Support/";
 	#endif
 		updateDatabase();
+		
     }
          	
 	void updateDatabase () {
@@ -54,6 +55,14 @@ public class DynamicDataSetLoader : MonoBehaviour
 						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_19.txt",
 						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_20.txt"
 						  };
+						  
+		debugText.text += "Dir exists?" + Directory.Exists(streamPath) + "\n";
+		
+		if(!Directory.Exists(streamPath)){
+			debugText.text += "creating directory";
+			Directory.CreateDirectory(streamPath);
+		}
+		
 		foreach(string url in urls){
 			StartCoroutine(downloadFile(url));
 		}
@@ -64,10 +73,11 @@ public class DynamicDataSetLoader : MonoBehaviour
 		string fileName =  splitURL[splitURL.Length - 1];
 		WWW www = new WWW(url);
 		yield return www;
-		debugText.text += "Downloaded " + fileName + "\n";
 		string savePath = streamPath + fileName;
+		
 
 		File.WriteAllBytes(savePath, www.bytes);
+		debugText.text += "saving " + fileName + "\n";
 		
 		if(fileName == "Launchable_Mobile_Application.dat"){
 			debugText.text += "loading dataset \n";
@@ -84,12 +94,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 		string dataSetPath = streamPath + dataSetName + ".xml";
 	
 		debugText.text += dataSetPath + "\n";
-		debugText.text += "Dir exists?" + Directory.Exists(streamPath) + "\n";
-		
-		if(!Directory.Exists(streamPath)){
-			Directory.CreateDirectory(streamPath);
-		}
-		
+
         if (dataSet.Load(dataSetPath, VuforiaUnity.StorageType.STORAGE_ABSOLUTE)) {
              
             objectTracker.Stop();  // stop tracker so that we can add new dataset
