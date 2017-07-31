@@ -17,7 +17,7 @@ public class metadataParse : MonoBehaviour {
 	Text estateTitle;
 	Text estateBody;
 	Image estatePicture;
-
+	float startTime = 0f;
 
 	string streamPath; //path to save target info locally 
 	string targetName; 
@@ -25,6 +25,7 @@ public class metadataParse : MonoBehaviour {
 	bool estateCard = false; //check if we should have contact card functionality
 	
 	analyticsController analyticsControl;
+	
 	public Text debugText;
 
 	private RawImage videoTex;
@@ -88,7 +89,8 @@ public class metadataParse : MonoBehaviour {
 				analyticsControl.addTargetFound(targetName + " - " + splitMetadata[1]);
 			break;
           case "videoUrl":
-			      loadVideo (splitMetadata [1]);
+				startTime = Time.time;
+			    loadVideo (splitMetadata [1]);
             break;
 		  case "videoTranslateX":
 			transform.Find("videoCanvas/videoTexture").transform.position = new Vector3(Convert.ToSingle(splitMetadata[1]),0.0f,0.0f);
@@ -143,7 +145,7 @@ public class metadataParse : MonoBehaviour {
 
 
 	void loadVideo(string url){
-		videoTex.transform.localScale = new Vector3 (1f, 1f, 1f);
+		//videoTex.transform.localScale = new Vector3 (1f, 1f, 1f);
 		// start streaming the video from url link
 		StartCoroutine(playVideo(url));
 	}
@@ -151,6 +153,7 @@ public class metadataParse : MonoBehaviour {
 	// unity vidoe player
 	IEnumerator playVideo(string url)
 	{
+		launchTimeTrack(true, "");
 
 		//Add VideoPlayer to the GameObject
 		videoPlayer = gameObject.AddComponent<VideoPlayer>();
@@ -165,11 +168,11 @@ public class metadataParse : MonoBehaviour {
 
 		//We want to play from video clip not from url
 		videoPlayer.source = VideoSource.VideoClip;
-
-		// Vide clip from Url
+		// Video clip from Url
 		videoPlayer.source = VideoSource.Url;
-		videoPlayer.url = url;
 
+
+		videoPlayer.url = url;
 
 		//Set Audio Output to AudioSource
 		videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
@@ -177,13 +180,15 @@ public class metadataParse : MonoBehaviour {
 		//Assign the Audio from Video to AudioSource to be played
 		videoPlayer.EnableAudioTrack(0, true);
 		videoPlayer.SetTargetAudioSource(0, audioSource);
-
+		launchTimeTrack(false, "Setting up video components takes ");
+		launchTimeTrack(true, "");
 		//Set video To Play then prepare Audio to prevent Buffering
 //		videoPlayer.clip = videoToPlay;
 		videoPlayer.Prepare();
 
 		//Wait until video is prepared
 		WaitForSeconds waitTime = new WaitForSeconds(1);
+
 		while (!videoPlayer.isPrepared)
 		{
 			Debug.Log("Preparing Video");
@@ -192,7 +197,8 @@ public class metadataParse : MonoBehaviour {
 			//Break out of the while loop after 5 seconds wait
 			break;
 		}
-
+		launchTimeTrack(false, "Preparing video takes ");
+		launchTimeTrack(true, "");
 		Debug.Log("Done Preparing Video");
 
 		//Assign the Texture from Video to RawImage to be displayed
@@ -202,11 +208,12 @@ public class metadataParse : MonoBehaviour {
 		videoPlayer.Play();
 		//Play Sound
 		audioSource.Play();
+		launchTimeTrack(false, "Starting video takes ");
 
 		Debug.Log("Playing Video");
 		while (videoPlayer.isPlaying)
 		{
-			Debug.LogWarning("Video Time: " + Mathf.FloorToInt((float)videoPlayer.time));
+			//Debug.LogWarning("Video Time: " + Mathf.FloorToInt((float)videoPlayer.time));
 			yield return null;
 		}
 
@@ -235,15 +242,6 @@ public class metadataParse : MonoBehaviour {
 			Instantiate(bundle.LoadAsset("Maze_1"),transform);
 			
 		}
-		
-		//not tested
-		//byte[] bytes = www.bytes;
-		//string filename = test;
-		//File.WriteAllBytes(Application.persistentDataPath+"/" + filename, bytes);
-		/*reference
-		http://answers.unity3d.com/questions/19522/how-to-download-an-asset-bundle-to-local-hard-driv.html
-		http://answers.unity3d.com/questions/591912/how-to-download-asset-bundles-from-website-to-appl.html
-		*/
     }
 	
     IEnumerator GetImage(string url) {
@@ -255,5 +253,16 @@ public class metadataParse : MonoBehaviour {
 	public void resetCard(){
 		transform.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0.0f;
 	}
-				
+	
+	public void launchTimeTrack(bool toggle, string tracking){	
+		float trackedTime;	
+		if(toggle){
+			startTime = Time.time;
+		}
+		else{
+			trackedTime = Time.time - startTime;
+			debugText.text += tracking + trackedTime.ToString() + " seconds \n";
+		}
+
+	}
 }

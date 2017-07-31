@@ -56,10 +56,10 @@ public class DynamicDataSetLoader : MonoBehaviour
 						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_20.txt"
 						  };
 						  
-		debugText.text += "Dir exists?" + Directory.Exists(streamPath) + "\n";
+		//debugText.text += "Dir exists?" + Directory.Exists(streamPath) + "\n";
 		
 		if(!Directory.Exists(streamPath)){
-			debugText.text += "creating directory";
+			//debugText.text += "creating directory";
 			Directory.CreateDirectory(streamPath);
 		}
 		
@@ -77,10 +77,10 @@ public class DynamicDataSetLoader : MonoBehaviour
 		
 
 		File.WriteAllBytes(savePath, www.bytes);
-		debugText.text += "saving " + fileName + "\n";
+		//debugText.text += "saving " + fileName + "\n";
 		
 		if(fileName == "Launchable_Mobile_Application.dat"){
-			debugText.text += "loading dataset \n";
+			//debugText.text += "loading dataset \n";
 			VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
 		}
 	}
@@ -93,7 +93,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 		
 		string dataSetPath = streamPath + dataSetName + ".xml";
 	
-		debugText.text += dataSetPath + "\n";
+		//debugText.text += dataSetPath + "\n";
 
         if (dataSet.Load(dataSetPath, VuforiaUnity.StorageType.STORAGE_ABSOLUTE)) {
              
@@ -133,7 +133,7 @@ public class DynamicDataSetLoader : MonoBehaviour
                 }
             }
         } else {
-			debugText.text += "<color=red>Failed to load dataset: '" + dataSetName + "'</color>";
+			//debugText.text += "<color=red>Failed to load dataset: '" + dataSetName + "'</color>";
             Debug.LogError("<color=red>Failed to load dataset: '" + dataSetName + "'</color>");
 	}
 	}
