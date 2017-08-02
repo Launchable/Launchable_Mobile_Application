@@ -16,7 +16,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 	
 	string streamPath;
 	
-    // Use this for initialization
+    // every time the app starts it'll update the database. later on we'll do this every once in a while
     void Start()
     {
 		streamPath = Application.persistentDataPath + "/";
@@ -24,13 +24,13 @@ public class DynamicDataSetLoader : MonoBehaviour
 		streamPath += "Library/Application Support/";
 	#endif
 		updateDatabase();
-		
     }
          	
 	void updateDatabase () {
 		downloadFiles();
 	}
 	
+	//go through each URL and download. These are hardcoded now but these should be grabbed from the dashboard
 	void downloadFiles(){
 		string[] urls =  {"https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/Launchable_Mobile_Application.dat",
 						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/Launchable_Mobile_Application.xml", 
@@ -63,45 +63,50 @@ public class DynamicDataSetLoader : MonoBehaviour
 			Directory.CreateDirectory(streamPath);
 		}
 		
+		//download each file from url
 		foreach(string url in urls){
 			StartCoroutine(downloadFile(url));
 		}
 	}
 	
 	IEnumerator downloadFile(string url){
+		//get file name
 		string[] splitURL = url.Split('/');
 		string fileName =  splitURL[splitURL.Length - 1];
+		
+		//download 
 		WWW www = new WWW(url);
 		yield return www;
-		string savePath = streamPath + fileName;
 		
-
+		//save file
+		string savePath = streamPath + fileName;
 		File.WriteAllBytes(savePath, www.bytes);
 		//debugText.text += "saving " + fileName + "\n";
 		
+		//wait until database is updated to load into app
 		if(fileName == "Launchable_Mobile_Application.dat"){
 			//debugText.text += "loading dataset \n";
 			VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
 		}
 	}
 	
+	//uses vuforia library to load a dataset with all the image targets then creates image target objects that are AR trackable
     void LoadDataSet()
     {
+		//object tracker is what finds targets on the camera feed. 
         ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
-         
         DataSet dataSet = objectTracker.CreateDataSet();
 		
 		string dataSetPath = streamPath + dataSetName + ".xml";
-	
 		//debugText.text += dataSetPath + "\n";
 
+		//load dataset
         if (dataSet.Load(dataSetPath, VuforiaUnity.StorageType.STORAGE_ABSOLUTE)) {
              
             objectTracker.Stop();  // stop tracker so that we can add new dataset
  
             if (!objectTracker.ActivateDataSet(dataSet)) {
-                // Note: ImageTracker cannot have more than 100 total targets activated
-				
+                // Note: ImageTracker cannot have more than 1000 total targets activated
                 Debug.Log("<color=yellow>Failed to Activate DataSet: " + dataSetName + "</color>");
             }
  
@@ -109,8 +114,8 @@ public class DynamicDataSetLoader : MonoBehaviour
                 Debug.Log("<color=yellow>Tracker Failed to Start.</color>");
             }
  
+			//create image targets and add vuforia components
             int counter = 0;
- 
             IEnumerable<TrackableBehaviour> tbs = TrackerManager.Instance.GetStateManager().GetTrackableBehaviours();
             foreach (TrackableBehaviour tb in tbs) {
                 if (tb.name == "New Game Object") {
@@ -122,6 +127,7 @@ public class DynamicDataSetLoader : MonoBehaviour
                     tb.gameObject.AddComponent<DefaultTrackableEventHandler>();
                     tb.gameObject.AddComponent<TurnOffBehaviour>();
  
+					// attaches all the gameobjects for functionality like video and contact card
                     if (augmentationObject != null) {
                         // instantiate augmentation object and parent to trackable
                         GameObject augmentation = (GameObject)GameObject.Instantiate(augmentationObject);

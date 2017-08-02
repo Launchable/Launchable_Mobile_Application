@@ -10,31 +10,36 @@ using System;
 
 public class metadataParse : MonoBehaviour {
 	
+	//in the dashboard, they'll have the option to put in contact info. 
 	public string emailContact = "none";
 	public string webContact = "none";
 	public string phoneContact = "none";
 
+	//gameObjects for the contact card.
 	Text estateTitle;
 	Text estateBody;
 	Image estatePicture;
+	
+	//debugging
 	float startTime = 0f;
+	public Text debugText;
 
-	string streamPath; //path to save target info locally 
+	
+	string streamPath; //path to save medatada in phone 
 	string targetName; 
-	string estatesCover = "estates_1";
 	bool estateCard = false; //check if we should have contact card functionality
 	
 	analyticsController analyticsControl;
 	
-	public Text debugText;
-
-	private RawImage videoTex;
 	// unity video player objects
+	private RawImage videoTex;
+	private GameObject videoGameObject;
 	private VideoPlayer videoPlayer;
 	private VideoSource videoSource;
 	private AudioSource audioSource;
 	
 	void Start(){
+		//local path for phone
 		streamPath = Application.persistentDataPath + "/";
 	#if UNITY_IOS
 		streamPath += "Library/Application Support/";
@@ -44,30 +49,32 @@ public class metadataParse : MonoBehaviour {
 	
 	//gets target name from defaultTrackableEventHandler and finds the metadata file
 	public void loadMetadata(string metadataFile){
-		if(metadataFile == estatesCover){
-			return;
-		}
-		string metadataPath = streamPath + metadataFile+".txt";
+		//downloaded metadata path
 		targetName = metadataFile;
+		string metadataPath = streamPath + metadataFile+".txt";
 		StreamReader file =  new StreamReader(metadataPath);
 		parseData(file);
-
 	}
 	
+	//goes line by line in metadata and
 	void parseData (StreamReader metadataFile) {
 		//find cloned objects
 		estateTitle = transform.Find("Canvas/estateCard/title").GetComponent<Text>();
 		estateBody = transform.Find("Canvas/estateCard/body").GetComponent<Text>();
 		estatePicture = transform.Find("Canvas/picture").GetComponent<Image>();
 
-		// find the ramimage object
-		videoTex = transform.Find ("videoCanvas/videoTexture").GetComponent<RawImage> ();
+		
+		//find the rawimage object for video
+		videoGameObject = transform.Find ("videoCanvas/videoTexture").gameObject;
+		videoTex = videoGameObject.GetComponent<RawImage> ();
 
+		//go through metadata file line per line
 		string line;
-		while((line = metadataFile.ReadLine()) != null)
-		{
+		while((line = metadataFile.ReadLine()) != null){
 			executeLineCommand(line);
 		}
+		
+		//estateCard shows a contact card with info in it. Currently deprecated but can be used later 
 		if(estateCard){	
 			transform.Find("Canvas").GetComponent<CanvasGroup>().alpha =1.0f;
 			transform.Find("Canvas").localScale = new Vector3(.00858262f,.00858262f,.00858262f);
@@ -79,27 +86,32 @@ public class metadataParse : MonoBehaviour {
 		metadataFile.Close();
 	}
 
+	//read and execute line
 	void executeLineCommand(string line){
+		//an example of a split line would look like this {'videoURL', 'www.video.com/firstVideo.mp4'}
 		string[] splitMetadata = line.Split(' ');
+		
 		if(splitMetadata[1].StartsWith("false")) return;
 		
 		switch (splitMetadata[0])
 		{
 		  case "name":
-				analyticsControl.addTargetFound(targetName + " - " + splitMetadata[1]);
+			analyticsControl.addTargetFound(targetName + " - " + splitMetadata[1]);
 			break;
           case "videoUrl":
-				startTime = Time.time;
-			    loadVideo (splitMetadata [1]);
+			StartCoroutine(splitMetadata [1]);
             break;
 		  case "videoTranslateX":
-			transform.Find("videoCanvas/videoTexture").transform.position = new Vector3(Convert.ToSingle(splitMetadata[1]),0.0f,0.0f);
+		    //translate video according to metadata
+			videoGameObject.transform.position = new Vector3(Convert.ToSingle(splitMetadata[1]),0.0f,0.0f);
 			break;
 		  case "videoTranslateY":
-			transform.Find("videoCanvas/videoTexture").transform.position = new Vector3(0.0f,0.0f,Convert.ToSingle(splitMetadata[1]));
+			//translate video according to metadata
+			videoGameObject.transform.position = new Vector3(0.0f,0.0f,Convert.ToSingle(splitMetadata[1]));
 			break;
 		  case "videoResize":
-			transform.Find("videoCanvas/videoTexture").transform.localScale = new Vector3(Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]));
+			//scale video according to metadata
+			videoGameObject.transform.localScale = new Vector3(Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]));
 			break;
           case "3durl":
             load3dAsset(splitMetadata[1]);
@@ -111,8 +123,8 @@ public class metadataParse : MonoBehaviour {
 			break;
 		}
 		
+		//update contact card if enabled
 		if(estateCard){
-			
 			switch(splitMetadata[0])
 			{
 			  case "estateCardTitle":
@@ -140,19 +152,10 @@ public class metadataParse : MonoBehaviour {
 
 	}
 	
-	void LateUpdate(){
-	}
-
-
-	void loadVideo(string url){
-		//videoTex.transform.localScale = new Vector3 (1f, 1f, 1f);
-		// start streaming the video from url link
-		StartCoroutine(playVideo(url));
-	}
-		
-	// unity vidoe player
+	// start streaming the video from url link
 	IEnumerator playVideo(string url)
 	{
+		//start debugging time
 		launchTimeTrack(true, "");
 
 		//Add VideoPlayer to the GameObject
@@ -219,7 +222,6 @@ public class metadataParse : MonoBehaviour {
 
 		Debug.Log("Done Playing Video");
 	}
-		
 	
 	void load3dAsset(string url){
 		StartCoroutine(GetAssetBundle(url));
@@ -229,6 +231,7 @@ public class metadataParse : MonoBehaviour {
 		StartCoroutine(GetImage(url));
 	}
 	
+	//Download Asset bundle. For this to work with any asset we have to get the asset name from metadata file or filename
     IEnumerator GetAssetBundle(string url) {
         
 		UnityWebRequest www = UnityWebRequest.GetAssetBundle(url);
@@ -239,11 +242,12 @@ public class metadataParse : MonoBehaviour {
         }
         else {
 			AssetBundle bundle = ((DownloadHandlerAssetBundle)www.downloadHandler).assetBundle;
-			Instantiate(bundle.LoadAsset("Maze_1"),transform);
+			Instantiate(bundle.LoadAsset("Maze_1"),transform);//hardcoded for now
 			
 		}
     }
 	
+	//downloads image and puts it on contact card sprite
     IEnumerator GetImage(string url) {
 		WWW www = new WWW(url);
 		yield return www;
@@ -254,6 +258,7 @@ public class metadataParse : MonoBehaviour {
 		transform.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0.0f;
 	}
 	
+	//time tracking. toggle true means start time, false is stop and print
 	public void launchTimeTrack(bool toggle, string tracking){	
 		float trackedTime;	
 		if(toggle){
