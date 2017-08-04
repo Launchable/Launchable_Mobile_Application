@@ -99,7 +99,7 @@ public class metadataParse : MonoBehaviour {
 			analyticsControl.addTargetFound(targetName + " - " + splitMetadata[1]);
 			break;
           case "videoUrl":
-			StartCoroutine(splitMetadata [1]);
+			loadVideo(splitMetadata[1]);
             break;
 		  case "videoTranslateX":
 		    //translate video according to metadata
@@ -150,6 +150,10 @@ public class metadataParse : MonoBehaviour {
 			}
 		}
 
+	}
+	
+	void loadVideo(string url){
+		StartCoroutine(playVideo(url));
 	}
 	
 	// start streaming the video from url link
