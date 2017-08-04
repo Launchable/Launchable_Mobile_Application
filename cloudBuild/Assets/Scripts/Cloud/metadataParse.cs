@@ -15,19 +15,12 @@ public class metadataParse : MonoBehaviour {
 	public string webContact = "none";
 	public string phoneContact = "none";
 
-	//gameObjects for the contact card.
-	Text estateTitle;
-	Text estateBody;
-	Image estatePicture;
-	
 	//debugging
 	float startTime = 0f;
 	public Text debugText;
-
 	
 	string streamPath; //path to save medatada in phone 
 	string targetName; 
-	bool estateCard = false; //check if we should have contact card functionality
 	
 	analyticsController analyticsControl;
 	
@@ -58,11 +51,6 @@ public class metadataParse : MonoBehaviour {
 	
 	//goes line by line in metadata and
 	void parseData (StreamReader metadataFile) {
-		//find cloned objects
-		estateTitle = transform.Find("Canvas/estateCard/title").GetComponent<Text>();
-		estateBody = transform.Find("Canvas/estateCard/body").GetComponent<Text>();
-		estatePicture = transform.Find("Canvas/picture").GetComponent<Image>();
-
 		
 		//find the rawimage object for video
 		videoGameObject = transform.Find ("videoCanvas/videoTexture").gameObject;
@@ -72,15 +60,6 @@ public class metadataParse : MonoBehaviour {
 		string line;
 		while((line = metadataFile.ReadLine()) != null){
 			executeLineCommand(line);
-		}
-		
-		//estateCard shows a contact card with info in it. Currently deprecated but can be used later 
-		if(estateCard){	
-			transform.Find("Canvas").GetComponent<CanvasGroup>().alpha =1.0f;
-			transform.Find("Canvas").localScale = new Vector3(.00858262f,.00858262f,.00858262f);
-
-		}else{
-			transform.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0.0f;
 		}
 		
 		metadataFile.Close();
@@ -99,6 +78,7 @@ public class metadataParse : MonoBehaviour {
 			analyticsControl.addTargetFound(targetName + " - " + splitMetadata[1]);
 			break;
           case "videoUrl":
+			videoGameObject.transform.localScale = new Vector3(1f,1f,1f);
 			loadVideo(splitMetadata[1]);
             break;
 		  case "videoTranslateX":
@@ -116,39 +96,10 @@ public class metadataParse : MonoBehaviour {
           case "3durl":
             load3dAsset(splitMetadata[1]);
             break;
-          case "estateCard":
-            estateCard = false; //to activate contact card functionality this should be changed to true.
-            break;
 		default:
 			break;
 		}
 		
-		//update contact card if enabled
-		if(estateCard){
-			switch(splitMetadata[0])
-			{
-			  case "estateCardTitle":
-				estateTitle.text = line.Replace(splitMetadata[0],"");
-				break;
-			  case "estateCardDescription":
-				estateBody.text = line.Replace(splitMetadata[0],"");
-				break;
-			  case "estateImageUrl":
-				loadImage(splitMetadata[1]);
-				break;
-			  case "estatePhone":
-				phoneContact = splitMetadata[1];
-				break;
-			  case "estateEmail":
-				emailContact = splitMetadata[1];
-				break;
-			  case "estateWebsite":
-				webContact = splitMetadata[1];
-				break;
-			default:
-				break;
-			}
-		}
 
 	}
 	
@@ -255,12 +206,9 @@ public class metadataParse : MonoBehaviour {
     IEnumerator GetImage(string url) {
 		WWW www = new WWW(url);
 		yield return www;
-		estatePicture.sprite =  Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0, 0));
+		//estatePicture.sprite =  Sprite.Create(www.texture, new Rect(0, 0, www.texture.width, www.texture.height), new Vector2(0, 0));
     }	
-	
-	public void resetCard(){
-		transform.Find("Canvas").GetComponent<CanvasGroup>().alpha = 0.0f;
-	}
+
 	
 	//time tracking. toggle true means start time, false is stop and print
 	public void launchTimeTrack(bool toggle, string tracking){	
@@ -272,6 +220,6 @@ public class metadataParse : MonoBehaviour {
 			trackedTime = Time.time - startTime;
 			debugText.text += tracking + trackedTime.ToString() + " seconds \n";
 		}
-
 	}
+	
 }
