@@ -5,34 +5,24 @@ using UnityEngine.UI;
 using UnityEngine.Video;
 
 
-/// <summary>
-/// Unity VideoPlayer Script for Unity 5.6 (currently in beta 0b11 as of March 15, 2017)
-/// Blog URL: http://justcode.me/unity2d/how-to-play-videos-on-unity-using-new-videoplayer/
-/// YouTube Video Link: https://www.youtube.com/watch?v=nGA3jMBDjHk
-/// StackOverflow Disscussion: http://stackoverflow.com/questions/41144054/using-new-unity-videoplayer-and-videoclip-api-to-play-video/
-/// Code Contiburation: StackOverflow - Programmer
-/// </summary>
-
-
 public class streamVideo : MonoBehaviour {
 
 	public RawImage image;
-
 	public VideoClip videoToPlay;
-
 	private VideoPlayer videoPlayer;
 	private VideoSource videoSource;
-
 	private AudioSource audioSource;
 
-	// Use this for initialization
-	void Start () {
-		Application.runInBackground = true;
-		StartCoroutine(playVideo());
-	}
+	public GameObject playIcon;
+
+	public bool isPaused = false;
+	private bool firstRun = true;
+
 
 	IEnumerator playVideo()
 	{
+		playIcon.gameObject.SetActive (false);
+		firstRun = false;
 
 		//Add VideoPlayer to the GameObject
 		videoPlayer = gameObject.AddComponent<VideoPlayer> ();
@@ -46,7 +36,6 @@ public class streamVideo : MonoBehaviour {
 		audioSource.Pause ();
 
 		//We want to play from video clip not from url
-
 		videoPlayer.source = VideoSource.VideoClip;
 
 		// Vide clip from Url
@@ -81,7 +70,7 @@ public class streamVideo : MonoBehaviour {
 		image.texture = videoPlayer.texture;
 
 		//Play Video
-		videoPlayer.Play ();
+		videoPlayer.Play();
 
 		//Play Sound
 		audioSource.Play ();
@@ -95,4 +84,22 @@ public class streamVideo : MonoBehaviour {
 		Debug.Log ("Done Playing Video");
 
 	}
+
+	public void playPause() {
+		if (!firstRun && !isPaused) {
+			videoPlayer.Pause ();
+			audioSource.Pause ();
+			playIcon.SetActive (true);
+			isPaused = true;
+		} else if (!firstRun && isPaused) {
+			videoPlayer.Play ();
+			audioSource.Play ();
+			playIcon.SetActive (false);
+			isPaused = false;
+		} else {
+			StartCoroutine (playVideo ());
+		}
+	}
+
+
 }

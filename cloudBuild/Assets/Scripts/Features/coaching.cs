@@ -13,4 +13,5 @@ public static class PlayerPrefs2
 	{
 		return (PlayerPrefs.GetInt(key) == 1);
 	}
+		
 }

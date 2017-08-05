@@ -4,6 +4,7 @@ All Rights Reserved.
 Confidential and Proprietary - Protected under copyright and other laws.
 ==============================================================================*/
 
+using UnityEngine.Video;
 using UnityEngine;
 
 namespace Vuforia
@@ -23,6 +24,13 @@ namespace Vuforia
 		DynamicDataSetLoader targetControl;
 		analyticsController analyticsControl;
 
+		public bool playing;
+		public bool noplaying;
+
+//		private bool isFirstRun;
+//		private bool isPaused;
+
+
         #region UNTIY_MONOBEHAVIOUR_METHODS
     
         void Start()
@@ -36,7 +44,9 @@ namespace Vuforia
             {
                 mTrackableBehaviour.RegisterTrackableEventHandler(this);
             }
+				
         }
+			
 
         #endregion // UNTIY_MONOBEHAVIOUR_METHODS
 
@@ -57,6 +67,7 @@ namespace Vuforia
                 newStatus == TrackableBehaviour.Status.EXTENDED_TRACKED)
             {
                 OnTrackingFound();
+
             }
             else
             {
@@ -73,9 +84,17 @@ namespace Vuforia
 
         private void OnTrackingFound()
         {
+			playing = true;
+
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
+			Canvas [] canvasComponents = GetComponentsInChildren<Canvas>(true);
 
+			// Enable Canvas
+			foreach (Canvas component in canvasComponents)
+			{
+				component.enabled = true;
+			}
             // Enable rendering:
             foreach (Renderer component in rendererComponents)
             {
@@ -92,17 +111,32 @@ namespace Vuforia
 			string trackableName = mTrackableBehaviour.TrackableName;
 			analyticsControl.launchTimeTrack(true);
 
-			if(targetControl.currentTrackable != trackableName){
+			if (targetControl.currentTrackable != trackableName) {
 				targetControl.currentTrackable = trackableName;
-				mParser.loadMetadata(trackableName);
+				mParser.resetCard ();
+				mParser.loadMetadata (trackableName);
+			} else {
+				mParser.videoPlayer.Play ();
+				mParser.audioSource.Play ();
 			}
+
         }
 
 
         private void OnTrackingLost()
         {
+
+			playing = false;
+
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
+			Canvas [] canvasComponents = GetComponentsInChildren<Canvas>(true);
+
+			// Disable Canvas
+			foreach (Canvas component in canvasComponents)
+			{
+				component.enabled = false;
+			}
 
             // Disable rendering:
             foreach (Renderer component in rendererComponents)
@@ -118,8 +152,12 @@ namespace Vuforia
 			analyticsControl.launchTimeTrack(false);
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
-        }
 
+			mParser.videoPlayer.Pause ();
+			mParser.audioSource.Pause ();
+		
+		}
         #endregion // PRIVATE_METHODS
+
     }
 }
