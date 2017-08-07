@@ -751,7 +751,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 532339946}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c60b2a0a50ea4e3d835690c45e554a3, type: 3}
+  m_Script: {fileID: 11500000, guid: 36dce550882a91c40a3d30b351b0fcbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &532339948
@@ -929,7 +929,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 944928185}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1180f025177d04a7dbf235f0a025dfe2, type: 3}
+  m_Script: {fileID: 11500000, guid: 7d0e8574c2e844e4f98a31b9de702686, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1037831602
@@ -1035,7 +1035,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 542, y: -555}
-  m_SizeDelta: {x: 160, y: 30}
+  m_SizeDelta: {x: 163.84, y: 163.84}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1175254858
 Animator:
@@ -1114,8 +1114,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 2bfca90c42d0cd44f986d14d4bbec5de, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -1905,8 +1905,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -551, y: -547}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: -551, y: -580}
+  m_SizeDelta: {x: 91, y: 111.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1628451791
 Animator:
@@ -1963,7 +1963,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1628451793}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &1628451793
@@ -1985,8 +1996,8 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: c38f95676d23b4d4980426f99bdecb73, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
