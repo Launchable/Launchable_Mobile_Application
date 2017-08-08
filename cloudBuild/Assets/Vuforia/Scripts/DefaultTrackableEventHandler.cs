@@ -24,6 +24,9 @@ namespace Vuforia
 		DynamicDataSetLoader targetControl;
 		analyticsController analyticsControl;
 
+		private bool firstrun;
+		private bool ispaused;
+
         #region UNTIY_MONOBEHAVIOUR_METHODS
     
         void Start()
@@ -39,10 +42,18 @@ namespace Vuforia
             }
 				
         }
+
+		void Update()
+		{
+			if (Input.GetMouseButtonDown(0)) {
+				mParser.playIcon.gameObject.SetActive (true);
+				mParser.pauseIcon.gameObject.SetActive (true);
+				mParser.muteIcon.gameObject.SetActive (true);
+			}
+		}
 			
 
         #endregion // UNTIY_MONOBEHAVIOUR_METHODS
-
 
 
         #region PUBLIC_METHODS
@@ -77,6 +88,10 @@ namespace Vuforia
 
         private void OnTrackingFound()
         {
+
+			ispaused = mParser.isPaused;
+			firstrun = mParser.firstRun;
+
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 			Canvas [] canvasComponents = GetComponentsInChildren<Canvas>(true);
@@ -146,9 +161,12 @@ namespace Vuforia
 			// when target lost pause the video
 			mParser.videoPlayer.Pause ();
 			mParser.audioSource.Pause ();
+
+			mParser.playIcon.gameObject.SetActive (false);
+			mParser.pauseIcon.gameObject.SetActive (false);
 		
 		}
         #endregion // PRIVATE_METHODS
-
     }
+
 }

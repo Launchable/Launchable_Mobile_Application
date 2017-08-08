@@ -20,8 +20,8 @@ public class metadataParse : MonoBehaviour {
 	//debugging
 	float startTime = 0f;
 	public Text debugText;
-	
-	string streamPath; //path to save target info locally 
+	//path to save target info locally 
+	string streamPath; 
 	string targetName; 
 
 	analyticsController analyticsControl;
@@ -34,6 +34,13 @@ public class metadataParse : MonoBehaviour {
 	public VideoPlayer videoPlayer;
 	public AudioSource audioSource;
 
+	// button for video player
+	public GameObject pauseIcon;
+	public GameObject playIcon;
+	public GameObject muteIcon;
+	public bool isPaused = false;
+	public bool firstRun = true;
+
 	void Start(){
 		//local path for phone
 		streamPath = Application.persistentDataPath + "/";
@@ -41,11 +48,6 @@ public class metadataParse : MonoBehaviour {
 		streamPath += "Library/Application Support/";
 	#endif
 		analyticsControl = GameObject.FindObjectOfType<analyticsController> ();
-		//Add VideoPlayer to the GameObject
-		videoPlayer = gameObject.AddComponent<VideoPlayer>();
-
-		//Add AudioSource
-		audioSource = gameObject.AddComponent<AudioSource>();
 		
 		//find the rawimage object for video
 		videoGameObject = transform.Find ("videoCanvas/videoTexture").gameObject;
@@ -133,6 +135,11 @@ public class metadataParse : MonoBehaviour {
 	// start streaming the video from url link
 	IEnumerator playVideo()
 	{
+		pauseIcon.gameObject.SetActive (false);
+		playIcon.gameObject.SetActive (false);
+
+		firstRun = false;
+
 		//Add VideoPlayer to the GameObject
 		videoPlayer = gameObject.AddComponent<VideoPlayer>();
 
@@ -177,9 +184,29 @@ public class metadataParse : MonoBehaviour {
 
 		//Play Video
 		videoPlayer.Play();
-		//Play Sound
+		//Play Sounds
 		audioSource.Play();
 
+	}
+
+	public void pauseVideo()
+	{
+		videoPlayer.Pause ();
+		audioSource.Pause ();
+		pauseIcon.gameObject.SetActive (false);
+	}
+
+	public void playingVideo()
+	{
+		videoPlayer.Play();
+		audioSource.Play();
+		playIcon.gameObject.SetActive (false);
+	}
+
+	public void muteSound()
+	{
+		audioSource.mute = true;
+		muteIcon.gameObject.SetActive (false);
 	}
 		
 	
