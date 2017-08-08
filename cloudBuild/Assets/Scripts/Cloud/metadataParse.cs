@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
 using monoflow;
-using UnityEngine.Networking;
-using UnityEngine.UI;
-using System.IO;
-using UnityEngine.Video;
 using System;
+using System.IO;
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Video;
+using UnityEngine.Networking;
 
 public class metadataParse : MonoBehaviour {
 	
@@ -29,14 +29,10 @@ public class metadataParse : MonoBehaviour {
 	// unity video player objects
 	private RawImage videoTex;
 	private GameObject videoGameObject;
-	public VideoPlayer videoPlayer;
-	private VideoSource videoSource;
-	public AudioSource audioSource;
-
-//	public GameObject playIcon;
-	private bool isPaused = false;
-	public bool firstRun = true;
 	private string videoLink;
+	// access video player anywhere
+	public VideoPlayer videoPlayer;
+	public AudioSource audioSource;
 
 	void Start(){
 		//local path for phone
@@ -67,7 +63,6 @@ public class metadataParse : MonoBehaviour {
 	
 	//goes line by line in metadata and
 	void parseData (StreamReader metadataFile) {
-
 		
 		//go through metadata file line per line
 		string line;
@@ -91,8 +86,10 @@ public class metadataParse : MonoBehaviour {
 			analyticsControl.addTargetFound(targetName + " - " + splitMetadata[1]);
 			break;
 		case "videoUrl":
-			videoGameObject.transform.localScale = new Vector3(1f,1f,1f);
-			loadVideo(splitMetadata[1]);
+			videoGameObject.transform.localScale = new Vector3 (1f, 1f, 1f);
+			// store video link and start streaming the video in the unity videoplayer
+			videoLink = splitMetadata [1];
+			StartCoroutine (playVideo ());
 			break;
 		case "videoTranslateX":
 			//translate video according to metadata
@@ -121,9 +118,6 @@ public class metadataParse : MonoBehaviour {
 
 	}
 		
-	void loadVideo(string url){
-		StartCoroutine(playVideo(url));
-	}
 	
 	void updatePhone(string phoneNumber){
 		phoneContact = phoneNumber;
@@ -137,10 +131,13 @@ public class metadataParse : MonoBehaviour {
 	}
 	
 	// start streaming the video from url link
-	IEnumerator playVideo(string url){
+	IEnumerator playVideo()
+	{
+		//Add VideoPlayer to the GameObject
+		videoPlayer = gameObject.AddComponent<VideoPlayer>();
 
-		//playIcon.gameObject.SetActive (true);
-		firstRun = false;
+		//Add AudioSource
+		audioSource = gameObject.AddComponent<AudioSource>();
 
 		//Disable Play on Awake for both Video and Audio
 		videoPlayer.playOnAwake = false;
@@ -149,7 +146,7 @@ public class metadataParse : MonoBehaviour {
 
 		// Video clip from Url
 		videoPlayer.source = VideoSource.Url;
-		videoPlayer.url = url;
+		videoPlayer.url = videoLink;
 
 		//Set Audio Output to AudioSource
 		videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
@@ -172,34 +169,18 @@ public class metadataParse : MonoBehaviour {
 			//Break out of the while loop after 5 seconds wait
 			break;
 		}
-
-
+			
 		Debug.Log("Done Preparing Video");
 
 		//Assign the Texture from Video to RawImage to be displayed
 		videoTex.texture = videoPlayer.texture;
-	
+
 		//Play Video
 		videoPlayer.Play();
 		//Play Sound
 		audioSource.Play();
-	}
 
-//	public void playPause() {
-//		if (!firstRun && !isPaused) {
-//			videoPlayer.Pause ();
-//			audioSource.Pause ();
-//			playIcon.SetActive (true);
-//			isPaused = true;
-//		} else if (!firstRun && isPaused) {
-//			videoPlayer.Play ();
-//			audioSource.Play ();
-//			playIcon.SetActive (false);
-//			isPaused = false;
-//		} else {
-//			StartCoroutine (playVideo ());
-//		}
-//	}
+	}
 		
 	
 	void load3dAsset(string url){

@@ -24,13 +24,6 @@ namespace Vuforia
 		DynamicDataSetLoader targetControl;
 		analyticsController analyticsControl;
 
-		public bool playing;
-		public bool noplaying;
-
-//		private bool isFirstRun;
-//		private bool isPaused;
-
-
         #region UNTIY_MONOBEHAVIOUR_METHODS
     
         void Start()
@@ -84,8 +77,6 @@ namespace Vuforia
 
         private void OnTrackingFound()
         {
-			playing = true;
-
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 			Canvas [] canvasComponents = GetComponentsInChildren<Canvas>(true);
@@ -115,7 +106,9 @@ namespace Vuforia
 				targetControl.currentTrackable = trackableName;
 				mParser.resetCard ();
 				mParser.loadMetadata (trackableName);
-			} else {
+			} 
+			// if still the same target play the video
+			else {
 				mParser.videoPlayer.Play ();
 				mParser.audioSource.Play ();
 			}
@@ -125,9 +118,6 @@ namespace Vuforia
 
         private void OnTrackingLost()
         {
-
-			playing = false;
-
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 			Canvas [] canvasComponents = GetComponentsInChildren<Canvas>(true);
@@ -153,6 +143,7 @@ namespace Vuforia
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
 
+			// when target lost pause the video
 			mParser.videoPlayer.Pause ();
 			mParser.audioSource.Pause ();
 		
