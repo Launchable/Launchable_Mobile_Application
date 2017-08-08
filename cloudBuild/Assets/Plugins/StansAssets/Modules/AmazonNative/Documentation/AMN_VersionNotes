@@ -1,0 +1,65 @@
+2.4/17:
+Overall performance improvements
+Compatibility updates & fixes
+
+2.3/17:
+Overall performance improvements
+Compatibility updates & fixes
+
+2.2:
+Overall performance improvements
+Compatibility updates & fixes
+
+2.1:
+Overall performance improvements
+Compatibility updates & fixes
+
+2.0:
+Overall performance improvements
+Compatibility updates & fixes
+
+1.9:
+!!!Important!!! This version of the plugin is not compatible with the previous one.
+Please, remove the previous version and import the new one after.
+If you will face any kind of issues, please, contact Support Team via support@stansassets.com for assistance.
+
+Overall performance improvements
+Compatibility updates & fixes
+
+1.8:
+Compatibility update
+
+1.7:
+Compatibility update
+
+1.6:
+New Features:
+Ultimate Mobile compatibility update
+Game Circle new APIs and callbacks
+Billing Fucntionality improvements
+Advanced Amazon Ads APIs
+
+1.5:
+Fixes:
+Removed our own FlashlikeEvents. Now We are using C# actions.
+Improved plugin settings.
+
+1.4.1:
+Fixes:
+PurchaseProductHandler now has correct result of purchase
+
+1.4:
+New Features:
+In-App Billing v2.0
+Amazon Ads
+PlayMaker In-App Billing Sample
+
+1.3:
+API update
+
+1.1:
+FLE Refactor
+IOS compilation issues fixed
+
+1.0:
+Initial Commit

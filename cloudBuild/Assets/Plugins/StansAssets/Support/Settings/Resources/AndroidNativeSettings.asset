@@ -8,9 +8,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: a04884765aeeb4749909d668fc086f5c, type: 3}
   m_Name: AndroidNativeSettings
-  m_EditorClassIdentifier: Assembly-CSharp-firstpass::AndroidNativeSettings
+  m_EditorClassIdentifier: 
   EnablePlusAPI: 1
   EnableGamesAPI: 1
   EnableAppInviteAPI: 1
@@ -77,6 +77,10 @@ MonoBehaviour:
   CheckAppLicenseAPI: 1
   NetworkStateAPI: 0
   FirebaseAnalytics: 0
+  FirebaseDynamicLinks: 0
+  FirebaseAppId: 
+  FirebaseApiKey: 
+  DynamicLinks: []
   InAppPurchasesAPI: 1
   GooglePlayServicesAPI: 1
   PlayServicesAdvancedSignInAPI: 1
@@ -89,7 +93,7 @@ MonoBehaviour:
   GalleryAPI: 1
   CameraAPI: 1
   KeepManifestClean: 1
-  GooglePlayServiceAppID: 0
+  GooglePlayServiceAppID: 216817929098
   ToolbarSelectedIndex: 0
   base64EncodedPublicKey: REPLACE_WITH_YOUR_PUBLIC_KEY
   ShowStoreProducts: 1
