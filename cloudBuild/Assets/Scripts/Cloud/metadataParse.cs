@@ -123,15 +123,23 @@ public class metadataParse : MonoBehaviour {
 	
 	void updatePhone(string phoneNumber){
 		phoneContact = phoneNumber;
-		phoneButton.GetComponent<Animator> ().Play ("phoneAnimation", -1, 0f);
-
 	}
 	
 	void updateEmail(string email){
 		emailContact = email;
-		emailButton.GetComponent<Animator> ().Play ("emailAnimation", -1, 0f);
 	}
 	
+	public void runContactAnimation(){
+		emailButton.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+		emailButton.GetComponent<Animator> ().Play ("emailAnimation", -1, 0f);
+		phoneButton.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+		phoneButton.GetComponent<Animator> ().Play ("phoneAnimation", -1, 0f);
+	}
+	public void resetContactButtons(){
+		emailButton.transform.localScale = new Vector3(0.0f,1.0f,1.0f);
+		phoneButton.transform.localScale = new Vector3(0.0f,1.0f,1.0f);
+
+	}
 	// start streaming the video from url link
 	IEnumerator playVideo()
 	{

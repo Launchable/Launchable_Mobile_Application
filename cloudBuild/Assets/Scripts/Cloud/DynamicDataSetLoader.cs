@@ -13,6 +13,9 @@ public class DynamicDataSetLoader : MonoBehaviour
     public string dataSetName = "leadingEstates.xml";  //  Assets/StreamingAssets/QCAR/DataSetName
 	public string currentTrackable = "none";
 	public Text debugText;
+	public string phoneContact;
+	public string emailContact;
+	public string webContact;
 	
 	string streamPath;
 	

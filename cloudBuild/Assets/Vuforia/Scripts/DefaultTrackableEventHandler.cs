@@ -116,7 +116,7 @@ namespace Vuforia
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
 			string trackableName = mTrackableBehaviour.TrackableName;
 			analyticsControl.launchTimeTrack(true);
-
+			mParser.runContactAnimation();
 			if (targetControl.currentTrackable != trackableName) {
 				targetControl.currentTrackable = trackableName;
 				mParser.resetCard ();
@@ -165,6 +165,7 @@ namespace Vuforia
 			mParser.playIcon.gameObject.SetActive (false);
 			mParser.pauseIcon.gameObject.SetActive (false);
 		
+			mParser.resetContactButtons();
 		}
         #endregion // PRIVATE_METHODS
     }
