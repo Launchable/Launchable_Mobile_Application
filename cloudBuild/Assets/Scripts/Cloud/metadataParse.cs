@@ -27,15 +27,22 @@ public class metadataParse : MonoBehaviour {
 	analyticsController analyticsControl;
 	
 	// unity video player objects
+    [SerializeField]
 	private RawImage videoTex;
-	private GameObject videoGameObject;
-	private string videoLink;
-	// access video player anywhere
-	public VideoPlayer videoPlayer;
+    private RawImage videoTex_preview;
+    private GameObject videoGameObject;
+    private GameObject videoGameObject_preview;
+    private string videoLink;
+    private string videoFolderLink;
+    // access video player anywhere
+    public VideoPlayer videoPlayer;
 	public AudioSource audioSource;
+    // access preview video player anywhere
+    public VideoPlayer videoPlayer_preview;
+    public AudioSource audioSource_preview;
 
-	// button for video player
-	public GameObject pauseIcon;
+    // button for video player
+    public GameObject pauseIcon;
 	public GameObject playIcon;
 	public GameObject muteIcon;
 	public bool isPaused = false;
@@ -52,7 +59,9 @@ public class metadataParse : MonoBehaviour {
 		//find the rawimage object for video
 		videoGameObject = transform.Find ("videoCanvas/videoTexture").gameObject;
 		videoTex = videoGameObject.GetComponent<RawImage> ();
-	}
+        videoGameObject_preview = transform.Find("videoCanvas_preview/preview").gameObject;
+        videoTex_preview = videoGameObject_preview.GetComponent<RawImage>();
+    }
 	
 	//gets target name from defaultTrackableEventHandler and finds the metadata file
 	public void loadMetadata(string metadataFile){
@@ -93,20 +102,33 @@ public class metadataParse : MonoBehaviour {
 			videoLink = splitMetadata [1];
 			StartCoroutine (playVideo ());
 			break;
-		case "videoTranslateX":
+        case "videoPreviewUrl":
+            videoGameObject.transform.localScale = new Vector3(1f, 1f, 1f);
+            videoGameObject_preview.transform.localScale = new Vector3(1f, 1f, 1f);
+            // store video link and start streaming the video in the unity videoplayer
+            videoFolderLink = splitMetadata[1];
+            StartCoroutine(playPreviewVideo());
+            break;
+        case "videoTranslateX":
 			//translate video according to metadata
-			videoGameObject.transform.position = new Vector3(Convert.ToSingle(splitMetadata[1]),0.0f,0.0f);			break;
+			videoGameObject.transform.position = new Vector3(Convert.ToSingle(splitMetadata[1]),0.0f,0.0f);
+            videoGameObject_preview.transform.position = new Vector3(Convert.ToSingle(splitMetadata[1]),0.0f,0.0f);
 			break;
 		case "videoTranslateY":
 			//translate video according to metadata
-			videoGameObject.transform.position = new Vector3(0.0f,0.0f,Convert.ToSingle(splitMetadata[1]));			break;
-			break;
+			videoGameObject.transform.position = new Vector3(0.0f,0.0f,Convert.ToSingle(splitMetadata[1]));
+            videoGameObject_preview.transform.position = new Vector3(0.0f, 0.0f, Convert.ToSingle(splitMetadata[1]));
+            break;
 		case "videoResize":
 			//scale video according to metadata
-			videoGameObject.transform.localScale = new Vector3(Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]));			break;
-			break;
+			videoGameObject.transform.localScale = new Vector3(Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]),Convert.ToSingle(splitMetadata[1]));
+                videoGameObject_preview.transform.localScale = new Vector3(Convert.ToSingle(splitMetadata[1]), Convert.ToSingle(splitMetadata[1]), Convert.ToSingle(splitMetadata[1]));
+            break;
 		case "3durl":
+            if(splitMetadata[1] != "none")
+            { 
 			load3dAsset(splitMetadata[1]);
+            }
 			break;
 		case "estatePhone":
 			updatePhone(splitMetadata[1]);
@@ -146,7 +168,7 @@ public class metadataParse : MonoBehaviour {
 		pauseIcon.gameObject.SetActive (false);
 		playIcon.gameObject.SetActive (false);
 
-		firstRun = false;
+		//firstRun = false;
 
 		//Add VideoPlayer to the GameObject
 		videoPlayer = gameObject.AddComponent<VideoPlayer>();
@@ -170,11 +192,11 @@ public class metadataParse : MonoBehaviour {
 		videoPlayer.EnableAudioTrack(0, true);
 		videoPlayer.SetTargetAudioSource(0, audioSource);
 
-		//Set video To Play then prepare Audio to prevent Buffering
+        //Set video To Play then prepare Audio to prevent Buffering
 		videoPlayer.Prepare();
 
 		//Wait until video is prepared
-		WaitForSeconds waitTime = new WaitForSeconds(1);
+		WaitForSeconds waitTime = new WaitForSeconds(0.5f);
 
 		while (!videoPlayer.isPrepared)
 		{
@@ -182,7 +204,7 @@ public class metadataParse : MonoBehaviour {
 			//Prepare/Wait for 5 sceonds only
 			yield return waitTime;
 			//Break out of the while loop after 5 seconds wait
-			break;
+			//break;
 		}
 			
 		Debug.Log("Done Preparing Video");
@@ -194,11 +216,107 @@ public class metadataParse : MonoBehaviour {
 		videoPlayer.Play();
 		//Play Sounds
 		audioSource.Play();
+        Debug.Log("Playing the video");
 
-	}
+    }
 
-	public void pauseVideo()
+    // start streaming the video from url link
+    IEnumerator playPreviewVideo()
+    {
+        pauseIcon.gameObject.SetActive(false);
+        playIcon.gameObject.SetActive(false);
+
+        //firstRun = false;
+
+        //Add VideoPlayers to the GameObject
+        videoPlayer_preview = transform.Find("videoCanvas_preview/preview").gameObject.AddComponent<VideoPlayer>();
+        videoPlayer = gameObject.AddComponent<VideoPlayer>();
+
+        //Add AudioSource
+        audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource_preview = transform.Find("videoCanvas_preview/preview").gameObject.AddComponent<AudioSource>();
+
+        //Disable Play on Awake for both Video and Audio
+        videoPlayer_preview.playOnAwake = false;
+        videoPlayer.playOnAwake = false;
+        audioSource_preview.playOnAwake = false;
+        audioSource.playOnAwake = false;
+        audioSource.Pause();
+        audioSource_preview.Pause();
+
+        // Video clips from Url
+        videoPlayer_preview.source = VideoSource.Url;
+        videoPlayer_preview.url = videoFolderLink + "10.mp4";
+        videoPlayer.source = VideoSource.Url;
+        videoPlayer.url = videoFolderLink + "full.mp4";
+
+        //Set Audio Output to AudioSource
+        videoPlayer_preview.audioOutputMode = VideoAudioOutputMode.AudioSource;
+        videoPlayer.audioOutputMode = VideoAudioOutputMode.AudioSource;
+
+        //Assign the Audio from Video to AudioSource to be played
+        videoPlayer_preview.EnableAudioTrack(0, true);
+        //videoPlayer.EnableAudioTrack(0, true);
+        videoPlayer_preview.SetTargetAudioSource(0, audioSource_preview);
+
+        //Set video To Play then prepare Audio to prevent Buffering
+        videoPlayer_preview.Prepare();
+        videoPlayer.Prepare();
+
+        videoPlayer.prepareCompleted += SwitchToFull;
+
+        //Wait until video is prepared
+        WaitForSeconds waitTime = new WaitForSeconds(0.1f);
+
+        while (!videoPlayer_preview.isPrepared)
+        {
+            Debug.Log("Preparing Video");
+            //Prepare/Wait for 5 sceonds only
+            yield return waitTime;
+            //Break out of the while loop after 5 seconds wait
+            //break;
+        }
+
+        videoGameObject.transform.position = Vector3.zero;
+        videoGameObject.transform.localScale = Vector3.zero;
+
+        Debug.Log("Done Preparing Video");
+
+        //Assign the Texture from Video to RawImage to be displayed
+        videoTex_preview.texture = videoPlayer_preview.texture;
+
+        //Play Video
+        videoPlayer_preview.Play();
+        //Play Sounds
+        audioSource_preview.Play();
+        Debug.Log("Playing the video @ " + Time.time);
+
+    }
+
+    private void SwitchToFull(VideoPlayer source)
+    {
+        videoGameObject.transform.position = videoGameObject_preview.transform.position;
+        videoGameObject.transform.localScale = videoGameObject_preview.transform.localScale;
+        videoGameObject_preview.transform.localScale = Vector3.zero;
+        //throw new NotImplementedException();
+        Debug.Log("Video Switched @ " + Time.time);
+        videoPlayer.time = videoPlayer_preview.time;
+
+        videoPlayer.EnableAudioTrack(0, true);
+        videoPlayer.SetTargetAudioSource(0, audioSource);
+        videoPlayer.Play();
+        videoTex.texture = videoPlayer.texture;
+        
+        
+        audioSource.Play();
+        //Stop Preview
+        videoPlayer_preview.Stop();
+        audioSource_preview.Stop();
+    }
+
+    public void pauseVideo()
 	{
+        Debug.Log("Pausing the video");
 		videoPlayer.Pause ();
 		audioSource.Pause ();
 		pauseIcon.gameObject.SetActive (false);
@@ -206,7 +324,8 @@ public class metadataParse : MonoBehaviour {
 
 	public void playingVideo()
 	{
-		videoPlayer.Play();
+        Debug.Log("Playing the video from playingVideo()");
+        videoPlayer.Play();
 		audioSource.Play();
 		playIcon.gameObject.SetActive (false);
 	}

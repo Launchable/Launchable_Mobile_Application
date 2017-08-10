@@ -4,8 +4,9 @@ using System.IO;
 using Vuforia;
 using System.Collections.Generic;
 using UnityEngine.UI;
+using System.Xml;
 
- 
+
 public class DynamicDataSetLoader : MonoBehaviour
 {
     // specify these in Unity Inspector
@@ -16,9 +17,13 @@ public class DynamicDataSetLoader : MonoBehaviour
 	public string phoneContact;
 	public string emailContact;
 	public string webContact;
-	
-	string streamPath;
-	
+
+    private string amazonS3Path = "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/";
+
+
+    string streamPath;
+    string tempStreamPath;
+
     // every time the app starts it'll update the database. later on we'll do this every once in a while
     void Start()
     {
@@ -35,44 +40,120 @@ public class DynamicDataSetLoader : MonoBehaviour
 	
 	//go through each URL and download. These are hardcoded now but these should be grabbed from the dashboard
 	void downloadFiles(){
-		string[] urls =  {"https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/Launchable_Mobile_Application.dat",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/Launchable_Mobile_Application.xml", 
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_1.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_2.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_3.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_4.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_5.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_6.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_7.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_8.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_9.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_10.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_11.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_12.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_13.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_14.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_15.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_16.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_17.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_18.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_19.txt",
-						  "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/target_20.txt"
-						  };
-						  
-		//debugText.text += "Dir exists?" + Directory.Exists(streamPath) + "\n";
-		
+					 
+		// Create root directory
 		if(!Directory.Exists(streamPath)){
-			//debugText.text += "creating directory";
 			Directory.CreateDirectory(streamPath);
 		}
-		
-		//download each file from url
-		foreach(string url in urls){
-			StartCoroutine(downloadFile(url));
-		}
-	}
-	
-	IEnumerator downloadFile(string url){
+
+        // Create ../temp directory
+        tempStreamPath = streamPath + "temp/";
+        if (!Directory.Exists(tempStreamPath))
+        {
+            Directory.CreateDirectory(tempStreamPath);
+        }
+
+        //download helper
+        StartCoroutine(downloadHelper());
+    }
+
+    IEnumerator downloadHelper()
+    {
+        //download helper file
+        WWW wwwHelper = new WWW(amazonS3Path + "helper.txt");
+        yield return wwwHelper;
+
+        //save helper file to temporary folder
+        string tempHelperSavePath = tempStreamPath + "helper.txt";
+        File.WriteAllBytes(tempHelperSavePath, wwwHelper.bytes);
+
+        /* Check if helper.txt exists locally
+         * TRUE - Compare the local helper.txt with the cloud helper.txt
+         * FALSE - Run update procedure
+         */
+        if (File.Exists(streamPath + "helper.txt"))
+        {
+
+            // *** DEVELOPER UPDATE NEEDED: Currently this is reading the entire file and comparing. Change to be specific to "timestamp"
+
+            string helperSavePath = streamPath + "helper.txt";
+            StreamReader tempHelperFile = new StreamReader(tempHelperSavePath);
+            string tempHelperLine = tempHelperFile.ReadLine();
+            StreamReader helperFile = new StreamReader(helperSavePath);
+            string helperLine = helperFile.ReadLine();
+
+            tempHelperFile.Close();
+            helperFile.Close();
+
+            if (tempHelperLine == helperLine)
+            {
+                //Files are timestamped the same, no update needed, proceed to loading the database
+                Debug.Log("Files are timestamped the same, no update needed, proceed to loading the database");
+                debugText.text += "Welcome Back. No update needed." + "\n";
+                VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
+            }
+            else
+            {
+
+                //Update needed, save helper file to root, delete temp, and proceed to downloading the XML
+                Debug.Log("Update needed, save helper file to root, delete temp, and proceed to downloading the XML");
+                debugText.text += "Welcome Back. Update needed, updating database" + "\n";
+                File.WriteAllBytes(helperSavePath, wwwHelper.bytes);
+                File.Delete(tempHelperSavePath);
+                StartCoroutine(downloadXML(amazonS3Path+"Launchable_Mobile_Application.xml"));
+            }
+        }
+        else
+        {
+            //No helper file found. Save helper.txt and proceed to downloading the XML
+            Debug.Log("No helper file found. Save helper.txt and proceed to downloading the XML");
+            debugText.text += "No helper.txt, updating database"+ "\n";
+            string helperSavePath = streamPath + "helper.txt";
+            File.WriteAllBytes(helperSavePath, wwwHelper.bytes);
+            StartCoroutine(downloadXML(amazonS3Path + "Launchable_Mobile_Application.xml"));
+        }
+    }
+
+    IEnumerator downloadXML(string url) { 
+        
+        //get file name
+        string[] splitURL = url.Split('/');
+        string fileName = splitURL[splitURL.Length - 1];
+
+        //download 
+        WWW www = new WWW(url);
+        yield return www;
+
+        //save file
+        string savePath = streamPath + fileName;
+        File.WriteAllBytes(savePath, www.bytes);
+
+
+        //parse XML and download .txt files
+        ParseXML(savePath);
+        StartCoroutine(downloadFile(amazonS3Path + "Launchable_Mobile_Application.dat"));
+    }
+
+    void ParseXML(string path)
+    {
+        Debug.Log("Parsing the XML");
+        debugText.text += "Parsing the XML" + "\n";
+        XmlDocument xmlDoc = new XmlDocument();
+        if (File.Exists(path))
+        {
+            xmlDoc.LoadXml(File.ReadAllText(path));
+        }
+
+        foreach (XmlElement node in xmlDoc.SelectNodes("QCARConfig/Tracking/ImageTarget"))
+        {
+            string tempFileName = node.GetAttribute("name");
+            tempFileName += ".txt";
+            string tempUrl = amazonS3Path + tempFileName;
+            StartCoroutine(downloadFile(tempUrl));
+        }
+    }
+
+    IEnumerator downloadFile(string url){
 		//get file name
 		string[] splitURL = url.Split('/');
 		string fileName =  splitURL[splitURL.Length - 1];
@@ -84,14 +165,33 @@ public class DynamicDataSetLoader : MonoBehaviour
 		//save file
 		string savePath = streamPath + fileName;
 		File.WriteAllBytes(savePath, www.bytes);
-		//debugText.text += "saving " + fileName + "\n";
-		
-		//wait until database is updated to load into app
-		if(fileName == "Launchable_Mobile_Application.dat"){
-			//debugText.text += "loading dataset \n";
-			VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
-		}
-	}
+        //debugText.text += "saving " + fileName + "\n";
+
+        //CleanUpFile(savePath);
+
+        //wait until database is updated to load into app
+        if (fileName == "Launchable_Mobile_Application.dat")
+        {
+            Debug.Log("Found .dat");
+            //debugText.text += "loading dataset \n";
+            VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
+        }
+
+    }
+
+    void CleanUpFile(string filePath)
+    {
+        if (filePath.EndsWith(".txt"))
+        {
+            StreamReader tempFile = new StreamReader(filePath);
+            string tempLine = tempFile.ReadLine();
+            if (tempLine.StartsWith("<?xml"))
+            {
+                File.Delete(filePath);
+            }
+            tempFile.Close();
+        }
+    }
 	
 	//uses vuforia library to load a dataset with all the image targets then creates image target objects that are AR trackable
     void LoadDataSet()

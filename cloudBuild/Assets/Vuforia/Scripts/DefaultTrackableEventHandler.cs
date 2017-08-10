@@ -24,7 +24,7 @@ namespace Vuforia
 		DynamicDataSetLoader targetControl;
 		analyticsController analyticsControl;
 
-		private bool firstrun;
+		private bool firstrun = true;
 		private bool ispaused;
 
         #region UNTIY_MONOBEHAVIOUR_METHODS
@@ -158,9 +158,15 @@ namespace Vuforia
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
 
-			// when target lost pause the video
-			mParser.videoPlayer.Pause ();
-			mParser.audioSource.Pause ();
+            ispaused = mParser.isPaused;
+            firstrun = mParser.firstRun;
+
+            // when target lost pause the video
+            if (!firstrun)
+            {
+                mParser.videoPlayer.Pause();
+                mParser.audioSource.Pause();
+            }
 
 			mParser.playIcon.gameObject.SetActive (false);
 			mParser.pauseIcon.gameObject.SetActive (false);
