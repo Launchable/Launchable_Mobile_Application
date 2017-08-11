@@ -17,7 +17,8 @@ public class DynamicDataSetLoader : MonoBehaviour
 	public string phoneContact;
 	public string emailContact;
 	public string webContact;
-
+	public GameObject loadingBar;
+	
     private string amazonS3Path = "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/";
 
 
@@ -40,7 +41,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 	
 	//go through each URL and download. These are hardcoded now but these should be grabbed from the dashboard
 	void downloadFiles(){
-					 
+		loadingBar.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
 		// Create root directory
 		if(!Directory.Exists(streamPath)){
 			Directory.CreateDirectory(streamPath);
@@ -115,7 +116,6 @@ public class DynamicDataSetLoader : MonoBehaviour
     }
 
     IEnumerator downloadXML(string url) { 
-        
         //get file name
         string[] splitURL = url.Split('/');
         string fileName = splitURL[splitURL.Length - 1];
@@ -127,7 +127,6 @@ public class DynamicDataSetLoader : MonoBehaviour
         //save file
         string savePath = streamPath + fileName;
         File.WriteAllBytes(savePath, www.bytes);
-
 
         //parse XML and download .txt files
         ParseXML(savePath);
@@ -244,6 +243,7 @@ public class DynamicDataSetLoader : MonoBehaviour
         } else {
 			//debugText.text += "<color=red>Failed to load dataset: '" + dataSetName + "'</color>";
             Debug.LogError("<color=red>Failed to load dataset: '" + dataSetName + "'</color>");
-	}
+		}
+		loadingBar.transform.localScale = new Vector3(0.0f,1.0f,1.0f);
 	}
 }
