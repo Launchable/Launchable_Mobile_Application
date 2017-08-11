@@ -27,6 +27,12 @@ namespace Vuforia
 		private bool firstrun = true;
 		private bool ispaused;
 
+		private float startTime = 0.0f;
+		private float endTime = 5.0f;
+		private float timer;
+		private bool check;
+
+
         #region UNTIY_MONOBEHAVIOUR_METHODS
     
         void Start()
@@ -45,11 +51,19 @@ namespace Vuforia
 
 		void Update()
 		{
-			if (Input.GetMouseButtonDown(0)) {
-				mParser.playIcon.gameObject.SetActive (true);
-				mParser.pauseIcon.gameObject.SetActive (true);
-				mParser.muteIcon.gameObject.SetActive (true);
+			if (Input.GetMouseButtonDown (0)) {
+				mParser.videoPlayer.Pause ();
+				mParser.audioSource.Pause ();
+				mParser.playPauseIcon.gameObject.SetActive (true);
 			}
+//			else if(Input.GetMouseButtonUp(0)) {
+//				if (timer != endTime) {
+//					timer += Time.deltaTime;
+//				} else if (timer == endTime) {
+//					mParser.playPauseIcon.gameObject.SetActive (false);
+//					timer = 0.0f;
+//				}
+//			}
 		}
 			
 
@@ -92,6 +106,8 @@ namespace Vuforia
 			ispaused = mParser.isPaused;
 			firstrun = mParser.firstRun;
 
+			check = GameObject.FindObjectOfType<metadataParse> ().pauseVideo;
+
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
 			Canvas [] canvasComponents = GetComponentsInChildren<Canvas>(true);
@@ -113,6 +129,12 @@ namespace Vuforia
                 component.enabled = true;
             }
 
+			if(check == true) {
+				mParser.videoPlayer.Pause();
+				mParser.audioSource.Pause();
+
+			}
+
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
 			string trackableName = mTrackableBehaviour.TrackableName;
 			analyticsControl.launchTimeTrack(true);
@@ -121,12 +143,17 @@ namespace Vuforia
 				targetControl.currentTrackable = trackableName;
 				mParser.resetCard ();
 				mParser.loadMetadata (trackableName);
-			} 
+			}
 			// if still the same target play the video
 			else {
-				mParser.videoPlayer.Play ();
-				mParser.audioSource.Play ();
+//				mParser.videoPlayer.Play ();
+//				mParser.audioSource.Play ();
+				mParser.playPauseIcon.gameObject.SetActive(true);
+
 			}
+
+
+		
 
         }
 
@@ -168,12 +195,17 @@ namespace Vuforia
                 mParser.audioSource.Pause();
             }
 
-			mParser.playIcon.gameObject.SetActive (false);
-			mParser.pauseIcon.gameObject.SetActive (false);
+			mParser.videoPlayer.Pause ();
+			mParser.audioSource.Pause ();
+			mParser.playPauseIcon.gameObject.SetActive (false);
+
+//			mParser.playIcon.gameObject.SetActive (false);
+//			mParser.pauseIcon.gameObject.SetActive (false);
 		
 			mParser.resetContactButtons();
 		}
         #endregion // PRIVATE_METHODS
+
     }
 
 }

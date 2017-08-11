@@ -40,13 +40,18 @@ public class metadataParse : MonoBehaviour {
     // access preview video player anywhere
     public VideoPlayer videoPlayer_preview;
     public AudioSource audioSource_preview;
+    
+	// buttons for video player
+    public Image playPauseIcon;
+//	public Sprite playIcon;
+//	public Sprite pauseIcon;
 
-    // button for video player
-    public GameObject pauseIcon;
-	public GameObject playIcon;
-	public GameObject muteIcon;
+
 	public bool isPaused = false;
 	public bool firstRun = true;
+
+	public bool pauseVideo = false;
+
 
 	void Start(){
 		//local path for phone
@@ -61,6 +66,8 @@ public class metadataParse : MonoBehaviour {
 		videoTex = videoGameObject.GetComponent<RawImage> ();
         videoGameObject_preview = transform.Find("videoCanvas_preview/preview").gameObject;
         videoTex_preview = videoGameObject_preview.GetComponent<RawImage>();
+
+		playPauseIcon.gameObject.SetActive (false);
     }
 	
 	//gets target name from defaultTrackableEventHandler and finds the metadata file
@@ -153,7 +160,7 @@ public class metadataParse : MonoBehaviour {
 	
 	public void runContactAnimation(){
 		emailButton.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
-		emailButton.GetComponent<Animator> ().Play ("emailAnimation", -1, 0f);
+		emailButton.GetComponent<Animator> ().Play ("newEmailAnimation", -1, 0f);
 		phoneButton.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
 		phoneButton.GetComponent<Animator> ().Play ("phoneAnimation", -1, 0f);
 	}
@@ -162,11 +169,10 @@ public class metadataParse : MonoBehaviour {
 		phoneButton.transform.localScale = new Vector3(0.0f,1.0f,1.0f);
 
 	}
+
 	// start streaming the video from url link
 	IEnumerator playVideo()
 	{
-		pauseIcon.gameObject.SetActive (false);
-		playIcon.gameObject.SetActive (false);
 
 		//firstRun = false;
 
@@ -223,8 +229,8 @@ public class metadataParse : MonoBehaviour {
     // start streaming the video from url link
     IEnumerator playPreviewVideo()
     {
-        pauseIcon.gameObject.SetActive(false);
-        playIcon.gameObject.SetActive(false);
+//        pauseIcon.gameObject.SetActive(false);
+//        playIcon.gameObject.SetActive(false);
 
         //firstRun = false;
 
@@ -314,29 +320,39 @@ public class metadataParse : MonoBehaviour {
         audioSource_preview.Stop();
     }
 
-    public void pauseVideo()
+//	public void pauseVideo()
+//	{
+//		Debug.Log("Pausing the video");
+//		videoPlayer.Pause ();
+//		audioSource.Pause ();
+//		pauseIcon.gameObject.SetActive (false);
+//	}
+//
+//	public void playingVideo()
+//	{
+//		Debug.Log("Playing the video from playingVideo()");
+//		videoPlayer.Play();
+//		audioSource.Play();
+//		playIcon.gameObject.SetActive (false);
+//	}
+
+	public void videoState()
 	{
-        Debug.Log("Pausing the video");
-		videoPlayer.Pause ();
-		audioSource.Pause ();
-		pauseIcon.gameObject.SetActive (false);
+		pauseVideo = !pauseVideo;
+		if (pauseVideo == true) {
+			videoPlayer.Play ();
+			audioSource.Play ();
+//			playPauseIcon.sprite = pauseIcon;
+			pauseVideo = false;
+			playPauseIcon.gameObject.SetActive (false);
+		}
+
 	}
 
-	public void playingVideo()
-	{
-        Debug.Log("Playing the video from playingVideo()");
-        videoPlayer.Play();
-		audioSource.Play();
-		playIcon.gameObject.SetActive (false);
-	}
 
-	public void muteSound()
-	{
-		audioSource.mute = true;
-		muteIcon.gameObject.SetActive (false);
-	}
+
+
 		
-	
 	void load3dAsset(string url){
 		StartCoroutine(GetAssetBundle(url));
 	}
