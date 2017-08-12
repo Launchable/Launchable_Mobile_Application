@@ -160,50 +160,58 @@ namespace Vuforia
 
         private void OnTrackingLost()
         {
-            Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
-            Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
-			Canvas [] canvasComponents = GetComponentsInChildren<Canvas>(true);
-
-			// Disable Canvas
-			foreach (Canvas component in canvasComponents)
-			{
-				component.enabled = false;
-			}
-
-            // Disable rendering:
-            foreach (Renderer component in rendererComponents)
-            {
-                component.enabled = false;
-            }
-
-            // Disable colliders:
-            foreach (Collider component in colliderComponents)
-            {
-                component.enabled = false;
-            }
-			analyticsControl.launchTimeTrack(false);
-
-            Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
-
-            ispaused = mParser.isPaused;
             firstrun = mParser.firstRun;
-
-            // when target lost pause the video
             if (!firstrun)
             {
+                Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
+                Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
+                Canvas[] canvasComponents = GetComponentsInChildren<Canvas>(true);
+
+                // Disable Canvas
+                foreach (Canvas component in canvasComponents)
+                {
+                    component.enabled = false;
+                }
+
+                // Disable rendering:
+                foreach (Renderer component in rendererComponents)
+                {
+                    component.enabled = false;
+                }
+
+                // Disable colliders:
+                foreach (Collider component in colliderComponents)
+                {
+                    component.enabled = false;
+                }
+                analyticsControl.launchTimeTrack(false);
+
+                Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " lost");
+
+                ispaused = mParser.isPaused;
+                firstrun = mParser.firstRun;
+
+                // when target lost pause the video
+                if (!firstrun)
+                {
+                    mParser.videoPlayer.Pause();
+                    mParser.audioSource.Pause();
+                }
+
                 mParser.videoPlayer.Pause();
                 mParser.audioSource.Pause();
+                mParser.playPauseIcon.gameObject.SetActive(false);
+
+                //			mParser.playIcon.gameObject.SetActive (false);
+                //			mParser.pauseIcon.gameObject.SetActive (false);
+
+                mParser.resetContactButtons();
             }
-
-			mParser.videoPlayer.Pause ();
-			mParser.audioSource.Pause ();
-			mParser.playPauseIcon.gameObject.SetActive (false);
-
-//			mParser.playIcon.gameObject.SetActive (false);
-//			mParser.pauseIcon.gameObject.SetActive (false);
-		
-			mParser.resetContactButtons();
-		}
+            else
+            {
+                Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " first run @ time: " + Time.time);
+            }
+        }
         #endregion // PRIVATE_METHODS
 
     }

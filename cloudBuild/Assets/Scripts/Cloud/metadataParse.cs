@@ -174,7 +174,7 @@ public class metadataParse : MonoBehaviour {
 	IEnumerator playVideo()
 	{
 
-		//firstRun = false;
+		firstRun = false;
 
 		//Add VideoPlayer to the GameObject
 		videoPlayer = gameObject.AddComponent<VideoPlayer>();
@@ -202,7 +202,7 @@ public class metadataParse : MonoBehaviour {
 		videoPlayer.Prepare();
 
 		//Wait until video is prepared
-		WaitForSeconds waitTime = new WaitForSeconds(0.5f);
+		WaitForSeconds waitTime = new WaitForSeconds(0.1f);
 
 		while (!videoPlayer.isPrepared)
 		{

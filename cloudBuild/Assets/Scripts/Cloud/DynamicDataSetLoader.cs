@@ -17,6 +17,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 	public string phoneContact;
 	public string emailContact;
 	public string webContact;
+    WWW wwwHelper;
 
     private string amazonS3Path = "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/";
 
@@ -54,18 +55,31 @@ public class DynamicDataSetLoader : MonoBehaviour
         }
 
         //download helper
+
         StartCoroutine(downloadHelper());
+    }
+
+    IEnumerator wwwHelperLoad()
+    {
+        wwwHelper = new WWW(amazonS3Path + "helper.txt");
+        yield return wwwHelper;
     }
 
     IEnumerator downloadHelper()
     {
+        Debug.Log("Pre helper download @ time: " + Time.time);
         //download helper file
-        WWW wwwHelper = new WWW(amazonS3Path + "helper.txt");
-        yield return wwwHelper;
+        StartCoroutine(wwwHelperLoad());
+
+        Debug.Log("Post www helper @ time: " + Time.time);
+
+        yield return null;
 
         //save helper file to temporary folder
         string tempHelperSavePath = tempStreamPath + "helper.txt";
+        Debug.Log("Before error");
         File.WriteAllBytes(tempHelperSavePath, wwwHelper.bytes);
+        Debug.Log("After error");
 
         /* Check if helper.txt exists locally
          * TRUE - Compare the local helper.txt with the cloud helper.txt
@@ -88,7 +102,7 @@ public class DynamicDataSetLoader : MonoBehaviour
             if (tempHelperLine == helperLine)
             {
                 //Files are timestamped the same, no update needed, proceed to loading the database
-                Debug.Log("Files are timestamped the same, no update needed, proceed to loading the database");
+                Debug.Log("Files are timestamped the same, no update needed, proceed to loading the database @ time: " + Time.time);
                 debugText.text += "Welcome Back. No update needed." + "\n";
                 VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
             }
@@ -111,7 +125,7 @@ public class DynamicDataSetLoader : MonoBehaviour
             string helperSavePath = streamPath + "helper.txt";
             File.WriteAllBytes(helperSavePath, wwwHelper.bytes);
             StartCoroutine(downloadXML(amazonS3Path + "Launchable_Mobile_Application.xml"));
-        }
+        } 
     }
 
     IEnumerator downloadXML(string url) { 
@@ -157,13 +171,17 @@ public class DynamicDataSetLoader : MonoBehaviour
 		//get file name
 		string[] splitURL = url.Split('/');
 		string fileName =  splitURL[splitURL.Length - 1];
-		
-		//download 
-		WWW www = new WWW(url);
+
+        //download
+        if (fileName.Contains(".dat")) 
+        Debug.Log("About to downloaded dataset @ " + Time.time + "\n");
+        WWW www = new WWW(url);
 		yield return www;
-		
-		//save file
-		string savePath = streamPath + fileName;
+        if (fileName.Contains(".dat")) 
+        Debug.Log("Just downloaded dataset @ " + Time.time + "\n");
+
+        //save file
+        string savePath = streamPath + fileName;
 		File.WriteAllBytes(savePath, www.bytes);
         //debugText.text += "saving " + fileName + "\n";
 
@@ -172,6 +190,7 @@ public class DynamicDataSetLoader : MonoBehaviour
         //wait until database is updated to load into app
         if (fileName == "Launchable_Mobile_Application.dat")
         {
+            
             Debug.Log("Found .dat");
             //debugText.text += "loading dataset \n";
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
@@ -216,16 +235,20 @@ public class DynamicDataSetLoader : MonoBehaviour
             if (!objectTracker.Start()) {
                 Debug.Log("<color=yellow>Tracker Failed to Start.</color>");
             }
- 
-			//create image targets and add vuforia components
+            float lastTime = Time.time;
+            debugText.text += "Loading dataset @ time: " + lastTime + "\n";
+
+            //create image targets and add vuforia components
             int counter = 0;
             IEnumerable<TrackableBehaviour> tbs = TrackerManager.Instance.GetStateManager().GetTrackableBehaviours();
+
             foreach (TrackableBehaviour tb in tbs) {
                 if (tb.name == "New Game Object") {
  
                     // change generic name to include trackable name
                     tb.gameObject.name = ++counter + ":DynamicImageTarget-" + tb.TrackableName;
- 
+                    Debug.Log("tb.gameObject.name before componenets @ " + (Time.time));
+                    lastTime = Time.time;
                     // add additional script components for trackable
                     tb.gameObject.AddComponent<DefaultTrackableEventHandler>();
                     tb.gameObject.AddComponent<TurnOffBehaviour>();
@@ -239,6 +262,8 @@ public class DynamicDataSetLoader : MonoBehaviour
                     } else {
                         Debug.Log("<color=yellow>Warning: No augmentation object specified for: " + tb.TrackableName + "</color>");
                     }
+                    Debug.Log("tb.gameObject.name after componenets @ " + (Time.time));
+                    lastTime = Time.time;
                 }
             }
         } else {

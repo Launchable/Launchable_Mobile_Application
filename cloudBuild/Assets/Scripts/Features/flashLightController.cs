@@ -23,6 +23,7 @@ public class flashLightController : MonoBehaviour
 		Vuforia.VuforiaARController.Instance.RegisterVuforiaInitializedCallback (delegate() {
 			mIsTorchSupported = Vuforia.CameraDevice.Instance.SetFlashTorchMode (false);
 			mTorchState = false;
+            Debug.Log("flashLightController @ time: " + Time.time);
 		});
 	}
 	#endregion
