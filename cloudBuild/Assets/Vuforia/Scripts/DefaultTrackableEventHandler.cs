@@ -48,7 +48,7 @@ namespace Vuforia
             }
 				
         }
-
+        /*
 		void Update()
 		{
 			if (Input.GetMouseButtonDown (0)) {
@@ -64,7 +64,7 @@ namespace Vuforia
 //					timer = 0.0f;
 //				}
 //			}
-		}
+		}*/
 			
 
         #endregion // UNTIY_MONOBEHAVIOUR_METHODS
@@ -146,11 +146,13 @@ namespace Vuforia
 			}
 			// if still the same target play the video
 			else {
-//				mParser.videoPlayer.Play ();
-//				mParser.audioSource.Play ();
-				mParser.playPauseIcon.gameObject.SetActive(true);
+                //				mParser.videoPlayer.Play ();
+                //				mParser.audioSource.Play ();
+                mParser.playIcon.gameObject.SetActive(true);
+                mParser.pauseIcon.gameObject.SetActive(false);
+                mParser.pauseVideo = true;
 
-			}
+            }
 
 
 		
@@ -200,7 +202,6 @@ namespace Vuforia
 
                 mParser.videoPlayer.Pause();
                 mParser.audioSource.Pause();
-                mParser.playPauseIcon.gameObject.SetActive(false);
 
                 //			mParser.playIcon.gameObject.SetActive (false);
                 //			mParser.pauseIcon.gameObject.SetActive (false);
@@ -209,7 +210,7 @@ namespace Vuforia
             }
             else
             {
-                Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " first run @ time: " + Time.time);
+                //Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " first run @ time: " + Time.time);
             }
         }
         #endregion // PRIVATE_METHODS

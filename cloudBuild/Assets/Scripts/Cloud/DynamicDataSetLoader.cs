@@ -5,7 +5,7 @@ using Vuforia;
 using System.Collections.Generic;
 using UnityEngine.UI;
 using System.Xml;
-
+using System;
 
 public class DynamicDataSetLoader : MonoBehaviour
 {
@@ -17,13 +17,11 @@ public class DynamicDataSetLoader : MonoBehaviour
 	public string phoneContact;
 	public string emailContact;
 	public string webContact;
-<<<<<<< HEAD
     WWW wwwHelper;
+    public float progressNum;
+    [SerializeField]
+    Slider datSlider;
 
-=======
-	public GameObject loadingBar;
-	
->>>>>>> 625488e10fa8dda0bfc342f9c11f319c191d5f0d
     private string amazonS3Path = "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/";
 
 
@@ -33,7 +31,9 @@ public class DynamicDataSetLoader : MonoBehaviour
     // every time the app starts it'll update the database. later on we'll do this every once in a while
     void Start()
     {
-		streamPath = Application.persistentDataPath + "/";
+        datSlider.gameObject.SetActive(false);
+
+        streamPath = Application.persistentDataPath + "/";
 	#if UNITY_IOS
 		streamPath += "Library/Application Support/";
 	#endif
@@ -46,7 +46,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 	
 	//go through each URL and download. These are hardcoded now but these should be grabbed from the dashboard
 	void downloadFiles(){
-		loadingBar.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
+					 
 		// Create root directory
 		if(!Directory.Exists(streamPath)){
 			Directory.CreateDirectory(streamPath);
@@ -134,6 +134,7 @@ public class DynamicDataSetLoader : MonoBehaviour
     }
 
     IEnumerator downloadXML(string url) { 
+        
         //get file name
         string[] splitURL = url.Split('/');
         string fileName = splitURL[splitURL.Length - 1];
@@ -146,9 +147,50 @@ public class DynamicDataSetLoader : MonoBehaviour
         string savePath = streamPath + fileName;
         File.WriteAllBytes(savePath, www.bytes);
 
+
         //parse XML and download .txt files
         ParseXML(savePath);
-        StartCoroutine(downloadFile(amazonS3Path + "Launchable_Mobile_Application.dat"));
+        datSlider.gameObject.SetActive(true);
+        StartCoroutine(downloadDat(amazonS3Path + "Launchable_Mobile_Application.dat"));
+    }
+
+    IEnumerator downloadDat(string url)
+    {
+        //WWW download = WWW.LoadFromCacheOrDownload(url, 1);
+        WWW download = new WWW(url);
+        while (!download.isDone)
+        {
+            progressNum = download.progress * 100;
+            datSlider.value = progressNum;
+            yield return null;
+        }
+        if (!string.IsNullOrEmpty(download.error))
+        {
+            // error!
+        }
+        else
+        {
+            // success!
+            StartCoroutine(removeProgressBar());
+        }
+
+        
+        //get file name
+        string[] splitURL = url.Split('/');
+        string fileName = splitURL[splitURL.Length - 1];
+
+        //save file
+        string savePath = streamPath + fileName;
+        File.WriteAllBytes(savePath, download.bytes);
+        
+        VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
+
+    }
+
+    IEnumerator removeProgressBar()
+    {
+        yield return new WaitForSeconds(2f);
+        datSlider.gameObject.SetActive(false);
     }
 
     void ParseXML(string path)
@@ -176,19 +218,27 @@ public class DynamicDataSetLoader : MonoBehaviour
 		string fileName =  splitURL[splitURL.Length - 1];
 
         //download
-        if (fileName.Contains(".dat")) 
-        Debug.Log("About to downloaded dataset @ " + Time.time + "\n");
+        if (fileName.Contains(".dat"))
+        {
+            Debug.Log("About to download dataset @ " + Time.time + "\n");
+        }
         WWW www = new WWW(url);
+        if (fileName.Contains(".dat"))
+        {
+            Debug.Log("Progress: " + www.progress);
+        }
 		yield return www;
         if (fileName.Contains(".dat")) 
         Debug.Log("Just downloaded dataset @ " + Time.time + "\n");
+
+        
 
         //save file
         string savePath = streamPath + fileName;
 		File.WriteAllBytes(savePath, www.bytes);
         //debugText.text += "saving " + fileName + "\n";
 
-        //CleanUpFile(savePath);
+        CleanUpFile(savePath);
 
         //wait until database is updated to load into app
         if (fileName == "Launchable_Mobile_Application.dat")
@@ -203,12 +253,13 @@ public class DynamicDataSetLoader : MonoBehaviour
 
     void CleanUpFile(string filePath)
     {
-        if (filePath.EndsWith(".txt"))
+        if (filePath.Contains(".txt"))
         {
             StreamReader tempFile = new StreamReader(filePath);
             string tempLine = tempFile.ReadLine();
-            if (tempLine.StartsWith("<?xml"))
+            if (tempLine.Contains("<?xml"))
             {
+                tempFile.Close();
                 File.Delete(filePath);
             }
             tempFile.Close();
@@ -250,7 +301,6 @@ public class DynamicDataSetLoader : MonoBehaviour
  
                     // change generic name to include trackable name
                     tb.gameObject.name = ++counter + ":DynamicImageTarget-" + tb.TrackableName;
-                    Debug.Log("tb.gameObject.name before componenets @ " + (Time.time));
                     lastTime = Time.time;
                     // add additional script components for trackable
                     tb.gameObject.AddComponent<DefaultTrackableEventHandler>();
@@ -265,14 +315,12 @@ public class DynamicDataSetLoader : MonoBehaviour
                     } else {
                         Debug.Log("<color=yellow>Warning: No augmentation object specified for: " + tb.TrackableName + "</color>");
                     }
-                    Debug.Log("tb.gameObject.name after componenets @ " + (Time.time));
                     lastTime = Time.time;
                 }
             }
         } else {
 			//debugText.text += "<color=red>Failed to load dataset: '" + dataSetName + "'</color>";
             Debug.LogError("<color=red>Failed to load dataset: '" + dataSetName + "'</color>");
-		}
-		loadingBar.transform.localScale = new Vector3(0.0f,1.0f,1.0f);
+	}
 	}
 }

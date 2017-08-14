@@ -29,6 +29,8 @@ public class metadataParse : MonoBehaviour {
 	// unity video player objects
     [SerializeField]
 	private RawImage videoTex;
+    [SerializeField]
+    float fadeDuration = 0.25f;
     private RawImage videoTex_preview;
     private GameObject videoGameObject;
     private GameObject videoGameObject_preview;
@@ -42,9 +44,8 @@ public class metadataParse : MonoBehaviour {
     public AudioSource audioSource_preview;
     
 	// buttons for video player
-    public Image playPauseIcon;
-//	public Sprite playIcon;
-//	public Sprite pauseIcon;
+    public Image playIcon;
+	public Image pauseIcon;
 
 
 	public bool isPaused = false;
@@ -64,10 +65,11 @@ public class metadataParse : MonoBehaviour {
 		//find the rawimage object for video
 		videoGameObject = transform.Find ("videoCanvas/videoTexture").gameObject;
 		videoTex = videoGameObject.GetComponent<RawImage> ();
+        videoTex.canvasRenderer.SetAlpha(0.0f);
         videoGameObject_preview = transform.Find("videoCanvas_preview/preview").gameObject;
         videoTex_preview = videoGameObject_preview.GetComponent<RawImage>();
 
-		playPauseIcon.gameObject.SetActive (false);
+        pauseIcon.gameObject.SetActive(true);
     }
 	
 	//gets target name from defaultTrackableEventHandler and finds the metadata file
@@ -214,14 +216,18 @@ public class metadataParse : MonoBehaviour {
 		}
 			
 		Debug.Log("Done Preparing Video");
+        Debug.Log("Color test");
 
-		//Assign the Texture from Video to RawImage to be displayed
-		videoTex.texture = videoPlayer.texture;
+
+        //Assign the Texture from Video to RawImage to be displayed
+        videoTex.texture = videoPlayer.texture;
 
 		//Play Video
 		videoPlayer.Play();
-		//Play Sounds
-		audioSource.Play();
+        videoTex.CrossFadeAlpha(1, fadeDuration, false);
+
+        //Play Sounds
+        audioSource.Play();
         Debug.Log("Playing the video");
 
     }
@@ -293,6 +299,7 @@ public class metadataParse : MonoBehaviour {
 
         //Play Video
         videoPlayer_preview.Play();
+
         //Play Sounds
         audioSource_preview.Play();
         Debug.Log("Playing the video @ " + Time.time);
@@ -320,39 +327,23 @@ public class metadataParse : MonoBehaviour {
         audioSource_preview.Stop();
     }
 
-//	public void pauseVideo()
-//	{
-//		Debug.Log("Pausing the video");
-//		videoPlayer.Pause ();
-//		audioSource.Pause ();
-//		pauseIcon.gameObject.SetActive (false);
-//	}
-//
-//	public void playingVideo()
-//	{
-//		Debug.Log("Playing the video from playingVideo()");
-//		videoPlayer.Play();
-//		audioSource.Play();
-//		playIcon.gameObject.SetActive (false);
-//	}
-
 	public void videoState()
 	{
 		pauseVideo = !pauseVideo;
 		if (pauseVideo == true) {
+			videoPlayer.Pause ();
+			audioSource.Pause ();
+//			playPauseIcon.sprite = pauseIcon;
+			playIcon.gameObject.SetActive (true);
+			pauseIcon.gameObject.SetActive (false);
+		} else {
 			videoPlayer.Play ();
 			audioSource.Play ();
-//			playPauseIcon.sprite = pauseIcon;
-			pauseVideo = false;
-			playPauseIcon.gameObject.SetActive (false);
+			playIcon.gameObject.SetActive (false);
+			pauseIcon.gameObject.SetActive (true);
 		}
-
 	}
 
-
-
-
-		
 	void load3dAsset(string url){
 		StartCoroutine(GetAssetBundle(url));
 	}
