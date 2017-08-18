@@ -195,6 +195,9 @@ public class DynamicDataSetLoader : MonoBehaviour
 
     void ParseXML(string path)
     {
+
+        StartCoroutine(downloadFile(amazonS3Path + "target_default.txt"));
+
         Debug.Log("Parsing the XML");
         debugText.text += "Parsing the XML" + "\n";
         XmlDocument xmlDoc = new XmlDocument();
@@ -210,6 +213,7 @@ public class DynamicDataSetLoader : MonoBehaviour
             string tempUrl = amazonS3Path + tempFileName;
             StartCoroutine(downloadFile(tempUrl));
         }
+
     }
 
     IEnumerator downloadFile(string url){
@@ -238,7 +242,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 		File.WriteAllBytes(savePath, www.bytes);
         //debugText.text += "saving " + fileName + "\n";
 
-        CleanUpFile(savePath);
+        CleanUpFile(savePath, fileName);
 
         //wait until database is updated to load into app
         if (fileName == "Launchable_Mobile_Application.dat")
@@ -251,7 +255,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 
     }
 
-    void CleanUpFile(string filePath)
+    void CleanUpFile(string filePath, string fileName)
     {
         if (filePath.Contains(".txt"))
         {
@@ -261,6 +265,7 @@ public class DynamicDataSetLoader : MonoBehaviour
             {
                 tempFile.Close();
                 File.Delete(filePath);
+                File.Copy(streamPath + "target_default.txt", streamPath + fileName);
             }
             tempFile.Close();
         }
