@@ -162,9 +162,9 @@ public class metadataParse : MonoBehaviour {
 	
 	public void runContactAnimation(){
 		emailButton.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
-		emailButton.GetComponent<Animator> ().Play ("newEmailAnimation", -1, 0f);
+		emailButton.GetComponent<Animator> ().Play ("emailInOut", -1, 0f);
 		phoneButton.transform.localScale = new Vector3(1.0f,1.0f,1.0f);
-		phoneButton.GetComponent<Animator> ().Play ("phoneAnimation", -1, 0f);
+		phoneButton.GetComponent<Animator> ().Play ("phoneInOut", -1, 0f);
 	}
 	public void resetContactButtons(){
 		emailButton.transform.localScale = new Vector3(0.0f,1.0f,1.0f);

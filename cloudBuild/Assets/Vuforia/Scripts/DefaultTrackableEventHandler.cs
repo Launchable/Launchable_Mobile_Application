@@ -16,37 +16,37 @@ namespace Vuforia
                                                 ITrackableEventHandler
     {
         #region PRIVATE_MEMBER_VARIABLES
- 
+
         private TrackableBehaviour mTrackableBehaviour;
-    
+
         #endregion // PRIVATE_MEMBER_VARIABLES
-		metadataParse mParser;
-		DynamicDataSetLoader targetControl;
-		analyticsController analyticsControl;
+        metadataParse mParser;
+        DynamicDataSetLoader targetControl;
+        analyticsController analyticsControl;
 
-		private bool firstrun = true;
-		private bool ispaused;
+        private bool firstrun = true;
+        private bool ispaused;
 
-		private float startTime = 0.0f;
-		private float endTime = 5.0f;
-		private float timer;
-		private bool check;
+        private float startTime = 0.0f;
+        private float endTime = 5.0f;
+        private float timer;
+        private bool check;
 
 
         #region UNTIY_MONOBEHAVIOUR_METHODS
-    
+
         void Start()
         {
-			mParser = transform.Find("targetObject(Clone)").GetComponent<metadataParse> ();
-			targetControl = GameObject.FindObjectOfType<DynamicDataSetLoader> ();
-			analyticsControl = GameObject.FindObjectOfType<analyticsController> ();
+            mParser = transform.Find("targetObject(Clone)").GetComponent<metadataParse>();
+            targetControl = GameObject.FindObjectOfType<DynamicDataSetLoader>();
+            analyticsControl = GameObject.FindObjectOfType<analyticsController>();
 
             mTrackableBehaviour = GetComponent<TrackableBehaviour>();
             if (mTrackableBehaviour)
             {
                 mTrackableBehaviour.RegisterTrackableEventHandler(this);
             }
-				
+
         }
         /*
 		void Update()
@@ -65,7 +65,7 @@ namespace Vuforia
 //				}
 //			}
 		}*/
-			
+
 
         #endregion // UNTIY_MONOBEHAVIOUR_METHODS
 
@@ -103,20 +103,20 @@ namespace Vuforia
         private void OnTrackingFound()
         {
 
-			ispaused = mParser.isPaused;
-			firstrun = mParser.firstRun;
+            ispaused = mParser.isPaused;
+            firstrun = mParser.firstRun;
 
-			check = GameObject.FindObjectOfType<metadataParse> ().pauseVideo;
+            check = GameObject.FindObjectOfType<metadataParse>().pauseVideo;
 
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
-			Canvas [] canvasComponents = GetComponentsInChildren<Canvas>(true);
+            Canvas[] canvasComponents = GetComponentsInChildren<Canvas>(true);
 
-			// Enable Canvas
-			foreach (Canvas component in canvasComponents)
-			{
-				component.enabled = true;
-			}
+            // Enable Canvas
+            foreach (Canvas component in canvasComponents)
+            {
+                component.enabled = true;
+            }
             // Enable rendering:
             foreach (Renderer component in rendererComponents)
             {
@@ -129,23 +129,26 @@ namespace Vuforia
                 component.enabled = true;
             }
 
-			if(check == true) {
-				mParser.videoPlayer.Pause();
-				mParser.audioSource.Pause();
+            if (check == true)
+            {
+                mParser.videoPlayer.Pause();
+                mParser.audioSource.Pause();
 
-			}
+            }
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
-			string trackableName = mTrackableBehaviour.TrackableName;
-			analyticsControl.launchTimeTrack(true);
-			mParser.runContactAnimation();
-			if (targetControl.currentTrackable != trackableName) {
-				targetControl.currentTrackable = trackableName;
-				mParser.resetCard ();
-				mParser.loadMetadata (trackableName);
-			}
-			// if still the same target play the video
-			else {
+            string trackableName = mTrackableBehaviour.TrackableName;
+            analyticsControl.launchTimeTrack(true);
+            mParser.runContactAnimation();
+            if (targetControl.currentTrackable != trackableName)
+            {
+                targetControl.currentTrackable = trackableName;
+                mParser.resetCard();
+                mParser.loadMetadata(trackableName);
+            }
+            // if still the same target play the video
+            else
+            {
                 //				mParser.videoPlayer.Play ();
                 //				mParser.audioSource.Play ();
                 mParser.playIcon.gameObject.SetActive(true);
@@ -155,7 +158,7 @@ namespace Vuforia
             }
 
 
-		
+
 
         }
 
@@ -195,7 +198,7 @@ namespace Vuforia
 
                 // when target lost pause the video
                 if (!firstrun)
-                {
+                {   
                     mParser.videoPlayer.Pause();
                     mParser.audioSource.Pause();
                 }
