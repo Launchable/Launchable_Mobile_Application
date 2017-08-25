@@ -16,7 +16,7 @@ MonoBehaviour:
   EnableAppInviteAPI: 1
   EnableDriveAPI: 0
   LoadProfileIcons: 1
-  LoadProfileImages: 1
+  LoadProfileImages: 0
   LoadQuestsImages: 1
   LoadQuestsIcons: 1
   LoadEventsIcons: 1
@@ -49,12 +49,12 @@ MonoBehaviour:
   Is_Achievements_Editor_Notifications_Enabled: 1
   GCM_SenderId: YOUR_SENDER_ID_HERE
   PushService: 0
-  SaveCameraImageToGallery: 0
+  SaveCameraImageToGallery: 1
   UseProductNameAsFolderName: 1
   GalleryFolderName: mobileApplicationBuild
   MaxImageLoadSize: 512
-  CameraCaptureMode: 0
-  ImageFormat: 0
+  CameraCaptureMode: 1
+  ImageFormat: 1
   ShowAppPermissions: 1
   EnableBillingAPI: 0
   EnablePSAPI: 0

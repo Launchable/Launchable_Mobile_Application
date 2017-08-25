@@ -28,7 +28,7 @@ MonoBehaviour:
   EnableUserNotificationsAPI: 0
   EnablePermissionAPI: 0
   AppleId: XXXXXXXXX
-  ToolbarIndex: 0
+  ToolbarIndex: 5
   ExpandMoreActionsMenu: 1
   ExpandModulesSettings: 1
   InAppsEditorTesting: 1

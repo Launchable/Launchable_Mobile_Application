@@ -29,10 +29,10 @@ MonoBehaviour:
   IOSAdEdngine: 0
   WP8AdEdngine: 0
   IsCameraAndGallerySettingsOpen: 1
-  IsCameraAndGalleryAndroidSettingsOpen: 0
+  IsCameraAndGalleryAndroidSettingsOpen: 1
   IsCameraAndGalleryIOSSettingsOpen: 0
   IsLP_Android_SettingsOpen: 0
   IsLP_IOS_SettingsOpen: 0
-  TP_Android_SettingsOpen: 0
+  TP_Android_SettingsOpen: 1
   TP_IOS_SettingsOpen: 0
   PlatformEngine: 0

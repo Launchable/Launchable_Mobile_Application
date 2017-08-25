@@ -189,7 +189,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 
     IEnumerator removeProgressBar()
     {
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(0.5f);
         datSlider.gameObject.SetActive(false);
     }
 

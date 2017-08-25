@@ -74,20 +74,25 @@ public class metadataParse : MonoBehaviour {
 	
 	//gets target name from defaultTrackableEventHandler and finds the metadata file
 	public void loadMetadata(string metadataFile){
-		targetName = metadataFile;
+        debugText.text += "Waiting for freeze...start loadMetaData @ time: " + Time.time + "\n";
+        targetName = metadataFile;
 		string metadataPath = streamPath + metadataFile+".txt";
-		StreamReader file =  new StreamReader(metadataPath);
-		parseData(file);
+        debugText.text += "Waiting for freeze...before stream @ time: " + Time.time + "\n";
+        StreamReader file =  new StreamReader(metadataPath);
+        debugText.text += "Waiting for freeze...after stream @ time: " + Time.time + "\n";
+        parseData(file);
 
 	}
 	
 	//goes line by line in metadata and
 	void parseData (StreamReader metadataFile) {
-		
-		//go through metadata file line per line
-		string line;
+
+        debugText.text += "Waiting for freeze...start parsing data @ time: " + Time.time + "\n";
+        //go through metadata file line per line
+        string line;
 		while((line = metadataFile.ReadLine()) != null)
 		{
+
 			executeLineCommand(line);
 		}
 		
@@ -109,7 +114,8 @@ public class metadataParse : MonoBehaviour {
 			videoGameObject.transform.localScale = new Vector3 (1f, 1f, 1f);
 			// store video link and start streaming the video in the unity videoplayer
 			videoLink = splitMetadata [1];
-			StartCoroutine (playVideo ());
+            debugText.text += "Waiting for freeze...before coroutine @ time: " + Time.time + "\n";
+            StartCoroutine(playVideo ());
 			break;
         case "videoPreviewUrl":
             videoGameObject.transform.localScale = new Vector3(1f, 1f, 1f);
@@ -189,8 +195,10 @@ public class metadataParse : MonoBehaviour {
 		audioSource.playOnAwake = false;
 		audioSource.Pause();
 
-		// Video clip from Url
-		videoPlayer.source = VideoSource.Url;
+        debugText.text += "Waiting for freeze...0 @ time: " + Time.time + "\n";
+
+        // Video clip from Url
+        videoPlayer.source = VideoSource.Url;
 		videoPlayer.url = videoLink;
 
 		//Set Audio Output to AudioSource
@@ -200,36 +208,53 @@ public class metadataParse : MonoBehaviour {
 		videoPlayer.EnableAudioTrack(0, true);
 		videoPlayer.SetTargetAudioSource(0, audioSource);
 
-        //Set video To Play then prepare Audio to prevent Buffering
-		videoPlayer.Prepare();
+        debugText.text += "Waiting for freeze...1 @ time: " + Time.time + "\n";
 
-		//Wait until video is prepared
-		WaitForSeconds waitTime = new WaitForSeconds(0.1f);
+        //Set video To Play then prepare Audio to prevent Buffering
+        videoPlayer.Prepare();
+        return null;
+        /*
+
+
+
+        debugText.text += "Waiting for freeze...2 @ time: " + Time.time + "\n";
+
+        //Wait until video is prepared
+        WaitForSeconds waitTime = new WaitForSeconds(0.1f);
 
 		while (!videoPlayer.isPrepared)
 		{
 			Debug.Log("Preparing Video");
-			//Prepare/Wait for 5 sceonds only
-			yield return waitTime;
+            debugText.text += "Waiting for freeze...3 @ time: " + Time.time + "\n";
+            //Prepare/Wait for 5 sceonds only
+            yield return waitTime;
 			//Break out of the while loop after 5 seconds wait
 			//break;
 		}
-			
-		Debug.Log("Done Preparing Video");
+
+        debugText.text += "Waiting for freeze...4 @ time: " + Time.time + "\n";
+
+        Debug.Log("Done Preparing Video");
         Debug.Log("Color test");
 
 
         //Assign the Texture from Video to RawImage to be displayed
         videoTex.texture = videoPlayer.texture;
 
-		//Play Video
-		videoPlayer.Play();
+        debugText.text += "Waiting for freeze...5 @ time: " + Time.time + "\n";
+
+
+        //Play Video
+        videoPlayer.Play();
         videoTex.CrossFadeAlpha(1, fadeDuration, false);
+
+        debugText.text += "Waiting for freeze...6 @ time: " + Time.time + "\n";
+
 
         //Play Sounds
         audioSource.Play();
         Debug.Log("Playing the video");
-
+        */
     }
 
     // start streaming the video from url link

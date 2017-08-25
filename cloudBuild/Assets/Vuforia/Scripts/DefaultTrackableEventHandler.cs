@@ -6,6 +6,7 @@ Confidential and Proprietary - Protected under copyright and other laws.
 
 using UnityEngine.Video;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Vuforia
 {
@@ -32,6 +33,7 @@ namespace Vuforia
         private float timer;
         private bool check;
 
+        public Text debugText;
 
         #region UNTIY_MONOBEHAVIOUR_METHODS
 
@@ -40,6 +42,8 @@ namespace Vuforia
             mParser = transform.Find("targetObject(Clone)").GetComponent<metadataParse>();
             targetControl = GameObject.FindObjectOfType<DynamicDataSetLoader>();
             analyticsControl = GameObject.FindObjectOfType<analyticsController>();
+
+            debugText = GameObject.Find("Debug").GetComponent<Text>();
 
             mTrackableBehaviour = GetComponent<TrackableBehaviour>();
             if (mTrackableBehaviour)
@@ -103,14 +107,17 @@ namespace Vuforia
         private void OnTrackingFound()
         {
 
+
             ispaused = mParser.isPaused;
             firstrun = mParser.firstRun;
 
             check = GameObject.FindObjectOfType<metadataParse>().pauseVideo;
 
+
             Renderer[] rendererComponents = GetComponentsInChildren<Renderer>(true);
             Collider[] colliderComponents = GetComponentsInChildren<Collider>(true);
             Canvas[] canvasComponents = GetComponentsInChildren<Canvas>(true);
+
 
             // Enable Canvas
             foreach (Canvas component in canvasComponents)
@@ -129,11 +136,11 @@ namespace Vuforia
                 component.enabled = true;
             }
 
+
             if (check == true)
             {
                 mParser.videoPlayer.Pause();
                 mParser.audioSource.Pause();
-
             }
 
             Debug.Log("Trackable " + mTrackableBehaviour.TrackableName + " found");
@@ -144,6 +151,7 @@ namespace Vuforia
             {
                 targetControl.currentTrackable = trackableName;
                 mParser.resetCard();
+                debugText.text += "After reset card @ time: " + Time.time + "\n";
                 mParser.loadMetadata(trackableName);
             }
             // if still the same target play the video
