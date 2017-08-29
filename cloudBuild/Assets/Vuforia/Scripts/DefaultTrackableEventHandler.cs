@@ -106,7 +106,7 @@ namespace Vuforia
 
         private void OnTrackingFound()
         {
-
+            GameObject.Find("targetManager").GetComponent<TargetTracker>().AddTarget(this.gameObject);
 
             ispaused = mParser.isPaused;
             firstrun = mParser.firstRun;
@@ -170,9 +170,14 @@ namespace Vuforia
 
         }
 
+        public void DropTargetTracking()
+        {
+            OnTrackingLost();
+        }
 
         private void OnTrackingLost()
-        {
+        { 
+
             firstrun = mParser.firstRun;
             if (!firstrun)
             {

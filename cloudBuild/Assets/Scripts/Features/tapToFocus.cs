@@ -6,7 +6,11 @@ using Vuforia;
 
 public class tapToFocus : MonoBehaviour {
 
-	private CameraDevice.FocusMode mFocusMode = CameraDevice.FocusMode.FOCUS_MODE_NORMAL;
+    public delegate void ClickAction();
+    public static event ClickAction OnClicked;
+
+
+    private CameraDevice.FocusMode mFocusMode = CameraDevice.FocusMode.FOCUS_MODE_NORMAL;
 
 	private const string AUTOFOCUS_ON = "Autofocus On";
 	private const string AUTOFOCUS_OFF = "Autofocus Off";
@@ -51,12 +55,22 @@ public class tapToFocus : MonoBehaviour {
 		
 	private void HandleSingleTap()
 	{
-		// trigger focus once
-		if (CameraDevice.Instance.SetFocusMode(CameraDevice.FocusMode.FOCUS_MODE_TRIGGERAUTO))
-		{
-			mFocusMode = CameraDevice.FocusMode.FOCUS_MODE_TRIGGERAUTO;
-			mAutoFocusText = AUTOFOCUS_ON;
-		}
+
+        if (OnClicked != null)
+        {
+            OnClicked();
+            OnClicked = null;
+        }
+        else
+        {
+            // trigger focus once
+            if (CameraDevice.Instance.SetFocusMode(CameraDevice.FocusMode.FOCUS_MODE_TRIGGERAUTO))
+            {
+                mFocusMode = CameraDevice.FocusMode.FOCUS_MODE_TRIGGERAUTO;
+                mAutoFocusText = AUTOFOCUS_ON;
+            }
+        }
+        
 
 	}
 		

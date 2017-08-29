@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using UnityEngine.UI;
+using Vuforia;
 
 public class screenShotSharing : MonoBehaviour {
 
@@ -130,17 +131,23 @@ public class screenShotSharing : MonoBehaviour {
 	// catch the screen shot and load it to the screen
 	public void captureScreen()
 	{
-		noAnimation = true;
-		noPhoneEmailButtons = true;
-		StartCoroutine ("Capture");
+        tapToFocus.OnClicked += captureScreenHandler; 
 	}
 
-	IEnumerator Capture(){
+    public void captureScreenHandler()
+    {
+        noAnimation = true;
+        noPhoneEmailButtons = true;
+        StartCoroutine("Capture");
+    }
+
+    IEnumerator Capture(){
 
 		disableInterface ();
 		disableALLButtons ();
 
-		if(currentPhone != null){
+
+        if (currentPhone != null){
 			currentPhone.gameObject.SetActive (false);
 			print ("phone should be gone now");
 		}
@@ -161,12 +168,15 @@ public class screenShotSharing : MonoBehaviour {
 		yield return new WaitForEndOfFrame();
 
 		activeSomeButtons ();
-	}
-				
-	/* --------------------------------------------------------------------------------------------------------- */
 
-	// diable all the buttons and interface
-	public void takeOutButtonFirst()
+        TrackerManager.Instance.GetTracker<ObjectTracker>().Stop();
+
+    }
+
+    /* --------------------------------------------------------------------------------------------------------- */
+
+    // diable all the buttons and interface
+    public void takeOutButtonFirst()
 	{
 		disableInterface ();
 		disableALLButtons ();
@@ -203,7 +213,11 @@ public class screenShotSharing : MonoBehaviour {
 	// go back to the interface
 	public void backToInterface()
 	{
-		activeInterface ();
+
+        TrackerManager.Instance.GetTracker<ObjectTracker>().Start();
+
+
+        activeInterface();
 		capture.gameObject.SetActive (true);
 
 		ImageHolder.SetActive (false);
@@ -215,6 +229,7 @@ public class screenShotSharing : MonoBehaviour {
 		noAnimation = false;
 		noPhoneEmailButtons = false;
 	}
+
 
 	// facebook sharing
 	public void postTextureFB(){

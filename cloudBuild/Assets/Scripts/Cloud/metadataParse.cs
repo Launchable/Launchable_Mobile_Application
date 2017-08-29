@@ -212,8 +212,8 @@ public class metadataParse : MonoBehaviour {
 
         //Set video To Play then prepare Audio to prevent Buffering
         videoPlayer.Prepare();
-        return null;
-        /*
+        //return null;
+        
 
 
 
@@ -254,7 +254,7 @@ public class metadataParse : MonoBehaviour {
         //Play Sounds
         audioSource.Play();
         Debug.Log("Playing the video");
-        */
+        
     }
 
     // start streaming the video from url link
@@ -354,20 +354,31 @@ public class metadataParse : MonoBehaviour {
 
 	public void videoState()
 	{
-		pauseVideo = !pauseVideo;
-		if (pauseVideo == true) {
-			videoPlayer.Pause ();
-			audioSource.Pause ();
-//			playPauseIcon.sprite = pauseIcon;
-			playIcon.gameObject.SetActive (true);
-			pauseIcon.gameObject.SetActive (false);
-		} else {
-			videoPlayer.Play ();
-			audioSource.Play ();
-			playIcon.gameObject.SetActive (false);
-			pauseIcon.gameObject.SetActive (true);
-		}
+
+        tapToFocus.OnClicked += videoStateHandler;
+
+		
 	}
+
+    public void videoStateHandler()
+    {
+        pauseVideo = !pauseVideo;
+        if (pauseVideo == true)
+        {
+            videoPlayer.Pause();
+            audioSource.Pause();
+            //			playPauseIcon.sprite = pauseIcon;
+            playIcon.gameObject.SetActive(true);
+            pauseIcon.gameObject.SetActive(false);
+        }
+        else
+        {
+            videoPlayer.Play();
+            audioSource.Play();
+            playIcon.gameObject.SetActive(false);
+            pauseIcon.gameObject.SetActive(true);
+        }
+    }
 
 	void load3dAsset(string url){
 		StartCoroutine(GetAssetBundle(url));

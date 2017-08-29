@@ -11,19 +11,21 @@ public class DynamicDataSetLoader : MonoBehaviour
 {
     // specify these in Unity Inspector
     public GameObject augmentationObject = null;  // you can use teapot or other object
-    public string dataSetName = "leadingEstates.xml";  //  Assets/StreamingAssets/QCAR/DataSetName
-	public string currentTrackable = "none";
-	public Text debugText;
-	public string phoneContact;
-	public string emailContact;
-	public string webContact;
+    public string dataSetName = "Launchable_Mobile_Application";  //  Assets/StreamingAssets/QCAR/DataSetName
+    public string currentTrackable = "none";
+    public Text debugText;
+    public string phoneContact;
+    public string emailContact;
+    public string webContact;
     WWW wwwHelper;
     public float progressNum;
     [SerializeField]
     Slider datSlider;
 
-    private string amazonS3Path = "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/";
-
+    //private string amazonS3Path = "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/";
+    private string amazonS3Path = "https://s3.us-east-2.amazonaws.com/launchable-mobile-application/";
+    private string datasetsDirectory = "Datasets/";
+    private string metadataDirectory = "Metadata/";
 
     string streamPath;
     string tempStreamPath;
@@ -34,23 +36,26 @@ public class DynamicDataSetLoader : MonoBehaviour
         datSlider.gameObject.SetActive(false);
 
         streamPath = Application.persistentDataPath + "/";
-	#if UNITY_IOS
+#if UNITY_IOS
 		streamPath += "Library/Application Support/";
-	#endif
-		updateDatabase();
+#endif
+        updateDatabase();
     }
-         	
-	void updateDatabase () {
-		downloadFiles();
-	}
-	
-	//go through each URL and download. These are hardcoded now but these should be grabbed from the dashboard
-	void downloadFiles(){
-					 
-		// Create root directory
-		if(!Directory.Exists(streamPath)){
-			Directory.CreateDirectory(streamPath);
-		}
+
+    void updateDatabase()
+    {
+        downloadFiles();
+    }
+
+    //go through each URL and download. These are hardcoded now but these should be grabbed from the dashboard
+    void downloadFiles()
+    {
+
+        // Create root directory
+        if (!Directory.Exists(streamPath))
+        {
+            Directory.CreateDirectory(streamPath);
+        }
 
         // Create ../temp directory
         tempStreamPath = streamPath + "temp/";
@@ -66,7 +71,7 @@ public class DynamicDataSetLoader : MonoBehaviour
 
     IEnumerator wwwHelperLoad()
     {
-        wwwHelper = new WWW(amazonS3Path + "helper.txt");
+        wwwHelper = new WWW(amazonS3Path + datasetsDirectory + "helper.txt");
         yield return wwwHelper;
     }
 
@@ -74,11 +79,14 @@ public class DynamicDataSetLoader : MonoBehaviour
     {
         Debug.Log("Pre helper download @ time: " + Time.time);
         //download helper file
-        StartCoroutine(wwwHelperLoad());
+        //StartCoroutine(wwwHelperLoad());
+
+        wwwHelper = new WWW(amazonS3Path + datasetsDirectory + "helper.txt");
+        yield return wwwHelper;
 
         Debug.Log("Post www helper @ time: " + Time.time);
 
-        yield return null;
+        //yield return null;
 
         //save helper file to temporary folder
         string tempHelperSavePath = tempStreamPath + "helper.txt";
@@ -119,22 +127,23 @@ public class DynamicDataSetLoader : MonoBehaviour
                 debugText.text += "Welcome Back. Update needed, updating database" + "\n";
                 File.WriteAllBytes(helperSavePath, wwwHelper.bytes);
                 File.Delete(tempHelperSavePath);
-                StartCoroutine(downloadXML(amazonS3Path+"Launchable_Mobile_Application.xml"));
+                StartCoroutine(downloadXML(amazonS3Path + datasetsDirectory + "Launchable_Mobile_Application.xml"));
             }
         }
         else
         {
             //No helper file found. Save helper.txt and proceed to downloading the XML
             Debug.Log("No helper file found. Save helper.txt and proceed to downloading the XML");
-            debugText.text += "No helper.txt, updating database"+ "\n";
+            debugText.text += "No helper.txt, updating database" + "\n";
             string helperSavePath = streamPath + "helper.txt";
             File.WriteAllBytes(helperSavePath, wwwHelper.bytes);
-            StartCoroutine(downloadXML(amazonS3Path + "Launchable_Mobile_Application.xml"));
-        } 
+            StartCoroutine(downloadXML(amazonS3Path + datasetsDirectory + "Launchable_Mobile_Application.xml"));
+        }
     }
 
-    IEnumerator downloadXML(string url) { 
-        
+    IEnumerator downloadXML(string url)
+    {
+
         //get file name
         string[] splitURL = url.Split('/');
         string fileName = splitURL[splitURL.Length - 1];
@@ -151,7 +160,7 @@ public class DynamicDataSetLoader : MonoBehaviour
         //parse XML and download .txt files
         ParseXML(savePath);
         datSlider.gameObject.SetActive(true);
-        StartCoroutine(downloadDat(amazonS3Path + "Launchable_Mobile_Application.dat"));
+        StartCoroutine(downloadDat(amazonS3Path + datasetsDirectory + "Launchable_Mobile_Application.dat"));
     }
 
     IEnumerator downloadDat(string url)
@@ -174,7 +183,7 @@ public class DynamicDataSetLoader : MonoBehaviour
             StartCoroutine(removeProgressBar());
         }
 
-        
+
         //get file name
         string[] splitURL = url.Split('/');
         string fileName = splitURL[splitURL.Length - 1];
@@ -182,7 +191,7 @@ public class DynamicDataSetLoader : MonoBehaviour
         //save file
         string savePath = streamPath + fileName;
         File.WriteAllBytes(savePath, download.bytes);
-        
+
         VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
 
     }
@@ -196,7 +205,7 @@ public class DynamicDataSetLoader : MonoBehaviour
     void ParseXML(string path)
     {
 
-        StartCoroutine(downloadFile(amazonS3Path + "target_default.txt"));
+        StartCoroutine(downloadFile(amazonS3Path + metadataDirectory + "target_default.txt"));
 
         Debug.Log("Parsing the XML");
         debugText.text += "Parsing the XML" + "\n";
@@ -210,16 +219,17 @@ public class DynamicDataSetLoader : MonoBehaviour
         {
             string tempFileName = node.GetAttribute("name");
             tempFileName += ".txt";
-            string tempUrl = amazonS3Path + tempFileName;
+            string tempUrl = amazonS3Path + metadataDirectory + tempFileName;
             StartCoroutine(downloadFile(tempUrl));
         }
 
     }
 
-    IEnumerator downloadFile(string url){
-		//get file name
-		string[] splitURL = url.Split('/');
-		string fileName =  splitURL[splitURL.Length - 1];
+    IEnumerator downloadFile(string url)
+    {
+        //get file name
+        string[] splitURL = url.Split('/');
+        string fileName = splitURL[splitURL.Length - 1];
 
         //download
         if (fileName.Contains(".dat"))
@@ -231,15 +241,15 @@ public class DynamicDataSetLoader : MonoBehaviour
         {
             Debug.Log("Progress: " + www.progress);
         }
-		yield return www;
-        if (fileName.Contains(".dat")) 
-        Debug.Log("Just downloaded dataset @ " + Time.time + "\n");
+        yield return www;
+        if (fileName.Contains(".dat"))
+            Debug.Log("Just downloaded dataset @ " + Time.time + "\n");
 
-        
+
 
         //save file
         string savePath = streamPath + fileName;
-		File.WriteAllBytes(savePath, www.bytes);
+        File.WriteAllBytes(savePath, www.bytes);
         //debugText.text += "saving " + fileName + "\n";
 
         CleanUpFile(savePath, fileName);
@@ -247,7 +257,7 @@ public class DynamicDataSetLoader : MonoBehaviour
         //wait until database is updated to load into app
         if (fileName == "Launchable_Mobile_Application.dat")
         {
-            
+
             Debug.Log("Found .dat");
             //debugText.text += "loading dataset \n";
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
@@ -270,28 +280,31 @@ public class DynamicDataSetLoader : MonoBehaviour
             tempFile.Close();
         }
     }
-	
-	//uses vuforia library to load a dataset with all the image targets then creates image target objects that are AR trackable
+
+    //uses vuforia library to load a dataset with all the image targets then creates image target objects that are AR trackable
     void LoadDataSet()
     {
-		//object tracker is what finds targets on the camera feed. 
+        //object tracker is what finds targets on the camera feed. 
         ObjectTracker objectTracker = TrackerManager.Instance.GetTracker<ObjectTracker>();
         DataSet dataSet = objectTracker.CreateDataSet();
-		
-		string dataSetPath = streamPath + dataSetName + ".xml";
-		//debugText.text += dataSetPath + "\n";
 
-		//load dataset
-        if (dataSet.Load(dataSetPath, VuforiaUnity.StorageType.STORAGE_ABSOLUTE)) {
-             
+        string dataSetPath = streamPath + dataSetName + ".xml";
+        //debugText.text += dataSetPath + "\n";
+
+        //load dataset
+        if (dataSet.Load(dataSetPath, VuforiaUnity.StorageType.STORAGE_ABSOLUTE))
+        {
+
             objectTracker.Stop();  // stop tracker so that we can add new dataset
- 
-            if (!objectTracker.ActivateDataSet(dataSet)) {
+
+            if (!objectTracker.ActivateDataSet(dataSet))
+            {
                 // Note: ImageTracker cannot have more than 1000 total targets activated
                 Debug.Log("<color=yellow>Failed to Activate DataSet: " + dataSetName + "</color>");
             }
- 
-            if (!objectTracker.Start()) {
+
+            if (!objectTracker.Start())
+            {
                 Debug.Log("<color=yellow>Tracker Failed to Start.</color>");
             }
             float lastTime = Time.time;
@@ -301,31 +314,38 @@ public class DynamicDataSetLoader : MonoBehaviour
             int counter = 0;
             IEnumerable<TrackableBehaviour> tbs = TrackerManager.Instance.GetStateManager().GetTrackableBehaviours();
 
-            foreach (TrackableBehaviour tb in tbs) {
-                if (tb.name == "New Game Object") {
- 
+            foreach (TrackableBehaviour tb in tbs)
+            {
+                if (tb.name == "New Game Object")
+                {
+
                     // change generic name to include trackable name
                     tb.gameObject.name = ++counter + ":DynamicImageTarget-" + tb.TrackableName;
                     lastTime = Time.time;
                     // add additional script components for trackable
                     tb.gameObject.AddComponent<DefaultTrackableEventHandler>();
                     tb.gameObject.AddComponent<TurnOffBehaviour>();
- 
-					// attaches all the gameobjects for functionality like video and contact card
-                    if (augmentationObject != null) {
+
+                    // attaches all the gameobjects for functionality like video and contact card
+                    if (augmentationObject != null)
+                    {
                         // instantiate augmentation object and parent to trackable
                         GameObject augmentation = (GameObject)GameObject.Instantiate(augmentationObject);
-                        augmentation.transform.SetParent(tb.gameObject.transform,true);
+                        augmentation.transform.SetParent(tb.gameObject.transform, true);
                         augmentation.gameObject.SetActive(true);
-                    } else {
+                    }
+                    else
+                    {
                         Debug.Log("<color=yellow>Warning: No augmentation object specified for: " + tb.TrackableName + "</color>");
                     }
                     lastTime = Time.time;
                 }
             }
-        } else {
-			//debugText.text += "<color=red>Failed to load dataset: '" + dataSetName + "'</color>";
+        }
+        else
+        {
+            //debugText.text += "<color=red>Failed to load dataset: '" + dataSetName + "'</color>";
             Debug.LogError("<color=red>Failed to load dataset: '" + dataSetName + "'</color>");
-	}
-	}
+        }
+    }
 }

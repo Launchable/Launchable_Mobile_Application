@@ -32,10 +32,17 @@ public class flashLightController : MonoBehaviour
 	#region Public Methods
 	public void ToggleTorch ()
 	{
-		mTorchState = !mTorchState;
-		Vuforia.CameraDevice.Instance.SetFlashTorchMode (mTorchState);
-		_TorchToggleImage.sprite = (mTorchState == true) ? _TorchOnSprite : _TorchOffSprite;
+        tapToFocus.OnClicked += toggleTorchHandler;
 
-	}
+    }
+
+    public void toggleTorchHandler ()
+    {
+        mTorchState = !mTorchState;
+        Vuforia.CameraDevice.Instance.SetFlashTorchMode(mTorchState);
+        _TorchToggleImage.sprite = (mTorchState == true) ? _TorchOnSprite : _TorchOffSprite;
+    }
+
+
 	#endregion
 }
