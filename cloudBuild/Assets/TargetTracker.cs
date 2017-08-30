@@ -38,4 +38,24 @@ public class TargetTracker : MonoBehaviour {
             targ.GetComponent<DefaultTrackableEventHandler>().DropTargetTracking();
         }
     }
+
+    public string GetTargetEmail()
+    {
+        if (targets.ToArray().Length > 0)
+        {
+            return targets.ToArray()[0].GetComponentInChildren<metadataParse>().emailContact;
+        }
+        else
+            return null;
+    }
+
+    public string GetTargetPhone()
+    {
+        if (targets.ToArray().Length > 0)
+        {
+            return targets.ToArray()[0].GetComponentInChildren<metadataParse>().phoneContact;
+        }
+        else
+            return null;
+    }
 }

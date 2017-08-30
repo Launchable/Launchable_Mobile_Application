@@ -195,8 +195,6 @@ public class metadataParse : MonoBehaviour {
 		audioSource.playOnAwake = false;
 		audioSource.Pause();
 
-        debugText.text += "Waiting for freeze...0 @ time: " + Time.time + "\n";
-
         // Video clip from Url
         videoPlayer.source = VideoSource.Url;
 		videoPlayer.url = videoLink;
@@ -208,24 +206,16 @@ public class metadataParse : MonoBehaviour {
 		videoPlayer.EnableAudioTrack(0, true);
 		videoPlayer.SetTargetAudioSource(0, audioSource);
 
-        debugText.text += "Waiting for freeze...1 @ time: " + Time.time + "\n";
-
         //Set video To Play then prepare Audio to prevent Buffering
         videoPlayer.Prepare();
         //return null;
         
-
-
-
-        debugText.text += "Waiting for freeze...2 @ time: " + Time.time + "\n";
-
         //Wait until video is prepared
         WaitForSeconds waitTime = new WaitForSeconds(0.1f);
 
 		while (!videoPlayer.isPrepared)
 		{
 			Debug.Log("Preparing Video");
-            debugText.text += "Waiting for freeze...3 @ time: " + Time.time + "\n";
             //Prepare/Wait for 5 sceonds only
             yield return waitTime;
 			//Break out of the while loop after 5 seconds wait

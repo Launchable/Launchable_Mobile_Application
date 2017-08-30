@@ -176,7 +176,9 @@ namespace Vuforia
         }
 
         private void OnTrackingLost()
-        { 
+        {
+            GameObject.Find("targetManager").GetComponent<TargetTracker>().RemoveTarget(this.gameObject);
+
 
             firstrun = mParser.firstRun;
             if (!firstrun)
