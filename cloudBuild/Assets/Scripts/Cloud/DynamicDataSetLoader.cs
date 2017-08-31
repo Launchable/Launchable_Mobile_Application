@@ -81,7 +81,7 @@ public class DynamicDataSetLoader : MonoBehaviour
         //download helper file
         //StartCoroutine(wwwHelperLoad());
 
-        wwwHelper = new WWW(amazonS3Path + datasetsDirectory + "helper.txt");
+        wwwHelper = new WWW(amazonS3Path + datasetsDirectory + "helper.xml");
         yield return wwwHelper;
 
         Debug.Log("Post www helper @ time: " + Time.time);
@@ -89,7 +89,7 @@ public class DynamicDataSetLoader : MonoBehaviour
         //yield return null;
 
         //save helper file to temporary folder
-        string tempHelperSavePath = tempStreamPath + "helper.txt";
+        string tempHelperSavePath = tempStreamPath + "helper.xml";
         Debug.Log("Before error");
         File.WriteAllBytes(tempHelperSavePath, wwwHelper.bytes);
         Debug.Log("After error");
@@ -98,26 +98,35 @@ public class DynamicDataSetLoader : MonoBehaviour
          * TRUE - Compare the local helper.txt with the cloud helper.txt
          * FALSE - Run update procedure
          */
-        if (File.Exists(streamPath + "helper.txt"))
+        if (File.Exists(streamPath + "helper.xml"))
         {
 
             // *** DEVELOPER UPDATE NEEDED: Currently this is reading the entire file and comparing. Change to be specific to "timestamp"
 
-            string helperSavePath = streamPath + "helper.txt";
-            StreamReader tempHelperFile = new StreamReader(tempHelperSavePath);
-            string tempHelperLine = tempHelperFile.ReadLine();
-            StreamReader helperFile = new StreamReader(helperSavePath);
-            string helperLine = helperFile.ReadLine();
+            string helperSavePath = streamPath + "helper.xml";
+            XmlDocument tempXmlHelper = new XmlDocument();
+            if (File.Exists(tempHelperSavePath))
+            {
+                tempXmlHelper.LoadXml(File.ReadAllText(tempHelperSavePath));
+            }
+            XmlDocument currentXmlHelper = new XmlDocument();
+            if (File.Exists(tempHelperSavePath))
+            {
+                currentXmlHelper.LoadXml(File.ReadAllText(helperSavePath));
+            }
 
-            tempHelperFile.Close();
-            helperFile.Close();
+            string tempTimestamp = (tempXmlHelper.SelectSingleNode("Helper") as XmlElement).GetAttribute("timestamp");
+            string currentTimestamp = (currentXmlHelper.SelectSingleNode("Helper") as XmlElement).GetAttribute("timestamp");
 
-            if (tempHelperLine == helperLine)
+            if (tempTimestamp == currentTimestamp)
             {
                 //Files are timestamped the same, no update needed, proceed to loading the database
                 Debug.Log("Files are timestamped the same, no update needed, proceed to loading the database @ time: " + Time.time);
                 debugText.text += "Welcome Back. No update needed." + "\n";
                 VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
+                checkMetadata(tempXmlHelper, currentXmlHelper);
+                File.WriteAllBytes(helperSavePath, wwwHelper.bytes);
+                File.Delete(tempHelperSavePath);
             }
             else
             {
@@ -132,13 +141,47 @@ public class DynamicDataSetLoader : MonoBehaviour
         }
         else
         {
-            //No helper file found. Save helper.txt and proceed to downloading the XML
+            //No helper file found. Save helper.xml and proceed to downloading the XML
             Debug.Log("No helper file found. Save helper.txt and proceed to downloading the XML");
             debugText.text += "No helper.txt, updating database" + "\n";
-            string helperSavePath = streamPath + "helper.txt";
+            string helperSavePath = streamPath + "helper.xml";
             File.WriteAllBytes(helperSavePath, wwwHelper.bytes);
             StartCoroutine(downloadXML(amazonS3Path + datasetsDirectory + "Launchable_Mobile_Application.xml"));
         }
+    }
+
+
+    void checkMetadata(XmlDocument tempXML, XmlDocument currentXML)
+    {
+        string targetsPath = "Helper/Targets/ImageTarget";
+        foreach (XmlElement node in tempXML.SelectNodes(targetsPath))
+        {
+            XmlElement currentMatch = FindElementByAttribute(currentXML, targetsPath, "name", node.GetAttribute("name"));
+            if (node.GetAttribute("version") == currentMatch.GetAttribute("version"))
+            {
+                Debug.Log(node.GetAttribute("name") + " is up to date.");
+            }
+            else
+            {
+                Debug.Log(node.GetAttribute("name") + " is out of date. Updating...");
+                string tempFileName = node.GetAttribute("name");
+                tempFileName += ".txt";
+                string tempUrl = amazonS3Path + metadataDirectory + tempFileName;
+                StartCoroutine(downloadFile(tempUrl));
+            }
+        }
+    }
+
+    XmlElement FindElementByAttribute(XmlDocument xml, string path, string attributeType, string attributeMatch)
+    {
+        foreach (XmlElement node in xml.SelectNodes(path))
+        {
+            if (node.GetAttribute(attributeType) == attributeMatch)
+            {
+                return node;
+            }
+        }
+        return null;
     }
 
     IEnumerator downloadXML(string url)
