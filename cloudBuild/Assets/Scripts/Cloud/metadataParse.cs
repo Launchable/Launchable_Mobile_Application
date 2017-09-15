@@ -168,26 +168,46 @@ public class metadataParse : MonoBehaviour {
 
     public void runContactAnimation()
     {
+
+        int buttonIndex = 0;
+
         if (emailContact != "null")
         {
-            emailButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            emailButton.GetComponent<Animator>().Play("emailInOut", -1, 0f);
+            Debug.Log("Found email contact");
+            contactButtons[buttonIndex].GetComponent<Animator>().SetInteger("index", buttonIndex);
+            contactButtons[buttonIndex].GetComponent<Animator>().SetBool("isActive", true);
+            contactButtons[buttonIndex].GetComponent<ContactButton>().SetButtonType(0);
+            buttonIndex++;
         }
         if (phoneContact != "null")
         {
-            phoneButton.transform.localScale = new Vector3(1.0f, 1.0f, 1.0f);
-            phoneButton.GetComponent<Animator>().Play("phoneInOut", -1, 0f);
+            Debug.Log("Found phone contact");
+            contactButtons[buttonIndex].GetComponent<Animator>().SetInteger("index", buttonIndex);
+            contactButtons[buttonIndex].GetComponent<Animator>().SetBool("isActive", true);
+            contactButtons[buttonIndex].GetComponent<ContactButton>().SetButtonType(1);
+            buttonIndex++;
+        }
+        if (webContact != "null")
+        {
+            Debug.Log("Found web contact");
+            contactButtons[buttonIndex].GetComponent<Animator>().SetInteger("index", buttonIndex);
+            contactButtons[buttonIndex].GetComponent<Animator>().SetBool("isActive", true);
+            contactButtons[buttonIndex].GetComponent<ContactButton>().SetButtonType(2);
+            buttonIndex++;
         }
 
     }
-    public void resetContactButtons(){
-		emailButton.transform.localScale = new Vector3(0.0f,1.0f,1.0f);
-		phoneButton.transform.localScale = new Vector3(0.0f,1.0f,1.0f);
+    public void resetContactButtons()
+    {
+        foreach (GameObject button in contactButtons)
+        {
+            button.GetComponent<Animator>().SetBool("isActive", false);
+        }
 
-	}
+    }
 
-	// start streaming the video from url link
-	IEnumerator playVideo()
+    // start streaming the video from url link
+    IEnumerator playVideo()
 	{
 
 		firstRun = false;
