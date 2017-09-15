@@ -58,4 +58,15 @@ public class TargetTracker : MonoBehaviour {
         else
             return null;
     }
+
+    public string GetTargetWeb()
+    {
+        if (targets.ToArray().Length > 0)
+        {
+            Debug.Log(targets.ToArray()[0].GetComponentInChildren<metadataParse>().webContact);
+            return targets.ToArray()[0].GetComponentInChildren<metadataParse>().webContact;
+        }
+        else
+            return null;
+    }
 }
