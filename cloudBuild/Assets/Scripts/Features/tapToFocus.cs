@@ -37,7 +37,7 @@ public class tapToFocus : MonoBehaviour {
 	}
 		
 	void Update() {
-		if (Input.touchCount > 0) { 
+		if (Input.touchCount > 0 || Input.GetMouseButtonDown(1)) { 
 			//if there is any touch
 			touchDuration += Time.deltaTime;
 			touch = Input.GetTouch (0);

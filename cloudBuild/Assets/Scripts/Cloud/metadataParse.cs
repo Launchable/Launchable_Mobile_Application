@@ -14,8 +14,8 @@ public class metadataParse : MonoBehaviour {
 	public string emailContact = "none";
 	public string webContact = "none";
 	public string phoneContact = "none";
-	public GameObject phoneButton;
-	public GameObject emailButton;
+
+	public GameObject[] contactButtons;
 	
 	//debugging
 	float startTime = 0f;
@@ -151,6 +151,9 @@ public class metadataParse : MonoBehaviour {
 		case "estateEmail":
 			updateEmail(splitMetadata[1]);
 			break;
+		case "estateWebsite":
+			updateWebsite(splitMetadata[1]);
+			break;
 		default:
 			break;
 		}
@@ -164,6 +167,10 @@ public class metadataParse : MonoBehaviour {
 	
 	void updateEmail(string email){
 		emailContact = email;
+	}
+
+	void updateWebsite(string website){
+		webContact = website;
 	}
 
     public void runContactAnimation()

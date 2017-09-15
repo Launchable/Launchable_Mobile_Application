@@ -136,11 +136,15 @@ public class screenShotSharing : MonoBehaviour {
 	// catch the screen shot and load it to the screen
 	public void captureScreen()
 	{
-        tapToFocus.OnClicked += captureScreenHandler;
+		Debug.Log ("Capture screen");
+        //tapToFocus.OnClicked += captureScreenHandler;
+		captureScreenHandler ();
 	}
 
     public void captureScreenHandler()
     {
+
+		Debug.Log ("Capture screen handler");
         noAnimation = true;
         noPhoneEmailButtons = true;
         StartCoroutine("Capture");
@@ -148,18 +152,19 @@ public class screenShotSharing : MonoBehaviour {
 
     IEnumerator Capture(){
 
+		Debug.Log ("Capture");
 		disableInterface ();
 		disableALLButtons ();
 
 
-        if (currentPhone != null){
-			currentPhone.gameObject.SetActive (false);
-			print ("phone should be gone now");
-		}
-		if (currentEmail != null) {
-			currentEmail.gameObject.SetActive (false);
-			print ("email should be gone now");
-		}
+        //if (currentPhone != null){
+			//currentPhone.gameObject.SetActive (false);
+			//print ("phone should be gone now");
+		//}
+		//if (currentEmail != null) {
+			//currentEmail.gameObject.SetActive (false);
+			//print ("email should be gone now");
+		//}
 			
 		yield return new WaitForEndOfFrame();
 

@@ -24,6 +24,8 @@ public class ContactButton : MonoBehaviour
 
     public void OpenContact()
     {
+		Debug.Log ("opencontact");
+
         switch (contactButtonIndex)
         {
             case 0:
