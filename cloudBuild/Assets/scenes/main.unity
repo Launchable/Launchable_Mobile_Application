@@ -1247,8 +1247,8 @@ MonoBehaviour:
   ImageHolder: {fileID: 328449149}
   bigFlash: {fileID: 25414923}
   debugConsole: {fileID: 0}
-  currentPhone: {fileID: 1628451792}
-  currentEmail: {fileID: 1175254859}
+  currentPhone: {fileID: 0}
+  currentEmail: {fileID: 0}
   noAnimation: 0
   noPhoneEmailButtons: 0
 --- !u!4 &532339948
@@ -1702,145 +1702,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d0e8574c2e844e4f98a31b9de702686, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &1175254856
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1175254857}
-  - component: {fileID: 1175254861}
-  - component: {fileID: 1175254860}
-  - component: {fileID: 1175254859}
-  - component: {fileID: 1175254858}
-  m_Layer: 5
-  m_Name: email
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1175254857
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1175254856}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0.9999999, z: 0.9999999}
-  m_Children: []
-  m_Father: {fileID: 1590037453}
-  m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -588, y: -554.11}
-  m_SizeDelta: {x: 140, y: 140}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!95 &1175254858
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1175254856}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 13d3496c3dd684781a97d34e2838a836, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &1175254859
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1175254856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 1175254860}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: emailContact
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
---- !u!114 &1175254860
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1175254856}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 7eedfd9be86d97849a5535a7265a257e, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
---- !u!222 &1175254861
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1175254856}
 --- !u!1 &1225596862
 GameObject:
   m_ObjectHideFlags: 0
@@ -2312,6 +2173,12 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 11b33164bee505b45b701dabb34f8f3c, type: 2}
   m_IsPrefabParent: 0
+--- !u!114 &1497441888 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114230983100026388, guid: 11b33164bee505b45b701dabb34f8f3c,
+    type: 2}
+  m_PrefabInternal: {fileID: 1497441887}
+  m_Script: {fileID: 11500000, guid: 57c6612ed0935f346b5f65cc8d618916, type: 3}
 --- !u!1 &1498222125
 GameObject:
   m_ObjectHideFlags: 0
@@ -2358,6 +2225,21 @@ Prefab:
   m_Modification:
     m_TransformParent: {fileID: 1590037453}
     m_Modifications:
+    - target: {fileID: 114244112612387332, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114848264766120334, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 114424357841850992, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.size
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 224143872706104474, guid: a7c1b7392911a4f47a4c266bd05dafe3,
         type: 2}
       propertyPath: m_LocalPosition.x
@@ -2477,6 +2359,85 @@ Prefab:
       propertyPath: m_LocalScale.x
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114424357841850992, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: tracker
+      value: 
+      objectReference: {fileID: 1497441888}
+    - target: {fileID: 114244112612387332, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: tracker
+      value: 
+      objectReference: {fileID: 1497441888}
+    - target: {fileID: 114848264766120334, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: tracker
+      value: 
+      objectReference: {fileID: 1497441888}
+    - target: {fileID: 114848264766120334, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: contactButtonIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114244112612387332, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: contactButtonIndex
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 114244112612387332, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: 7eedfd9be86d97849a5535a7265a257e,
+        type: 3}
+    - target: {fileID: 114848264766120334, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: 7eedfd9be86d97849a5535a7265a257e,
+        type: 3}
+    - target: {fileID: 114424357841850992, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[0]
+      value: 
+      objectReference: {fileID: 21300000, guid: 7eedfd9be86d97849a5535a7265a257e,
+        type: 3}
+    - target: {fileID: 114244112612387332, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 21088e10270084344af449d23ad241dd,
+        type: 3}
+    - target: {fileID: 114848264766120334, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 21088e10270084344af449d23ad241dd,
+        type: 3}
+    - target: {fileID: 114424357841850992, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[1]
+      value: 
+      objectReference: {fileID: 21300000, guid: 21088e10270084344af449d23ad241dd,
+        type: 3}
+    - target: {fileID: 114244112612387332, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: 7a36887c033c7d04e937150c298898db,
+        type: 3}
+    - target: {fileID: 114848264766120334, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: 7a36887c033c7d04e937150c298898db,
+        type: 3}
+    - target: {fileID: 114424357841850992, guid: a7c1b7392911a4f47a4c266bd05dafe3,
+        type: 2}
+      propertyPath: defaultSprites.Array.data[2]
+      value: 
+      objectReference: {fileID: 21300000, guid: 7a36887c033c7d04e937150c298898db,
+        type: 3}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a7c1b7392911a4f47a4c266bd05dafe3, type: 2}
   m_IsPrefabParent: 0
@@ -2698,8 +2659,6 @@ RectTransform:
   - {fileID: 95858448}
   - {fileID: 1285711870}
   - {fileID: 1567267412}
-  - {fileID: 1628451790}
-  - {fileID: 1175254857}
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -2708,145 +2667,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!1 &1628451789
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1628451790}
-  - component: {fileID: 1628451794}
-  - component: {fileID: 1628451793}
-  - component: {fileID: 1628451792}
-  - component: {fileID: 1628451791}
-  m_Layer: 5
-  m_Name: phone
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!224 &1628451790
-RectTransform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1628451789}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0.7544238, z: 0.7544238}
-  m_Children: []
-  m_Father: {fileID: 1590037453}
-  m_RootOrder: 12
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 576, y: -554.11}
-  m_SizeDelta: {x: 140, y: 140}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!95 &1628451791
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1628451789}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 1562289eba9e5ae4eab6e31094bec490, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
---- !u!114 &1628451792
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1628451789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 1392445389, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Navigation:
-    m_Mode: 3
-    m_SelectOnUp: {fileID: 0}
-    m_SelectOnDown: {fileID: 0}
-    m_SelectOnLeft: {fileID: 0}
-    m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
-  m_Colors:
-    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
-    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
-    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
-    m_ColorMultiplier: 1
-    m_FadeDuration: 0.1
-  m_SpriteState:
-    m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_DisabledSprite: {fileID: 0}
-  m_AnimationTriggers:
-    m_NormalTrigger: Normal
-    m_HighlightedTrigger: Highlighted
-    m_PressedTrigger: Pressed
-    m_DisabledTrigger: Disabled
-  m_Interactable: 1
-  m_TargetGraphic: {fileID: 1628451793}
-  m_OnClick:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: phoneContact
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-    m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
-      Culture=neutral, PublicKeyToken=null
---- !u!114 &1628451793
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1628451789}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 21300000, guid: 21088e10270084344af449d23ad241dd, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
---- !u!222 &1628451794
-CanvasRenderer:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1628451789}
 --- !u!1 &1653898477
 GameObject:
   m_ObjectHideFlags: 0
@@ -3321,8 +3141,8 @@ MonoBehaviour:
   emailContact: none
   webContact: none
   phoneContact: none
-  phoneButton: {fileID: 1628451789}
-  emailButton: {fileID: 1175254856}
+  phoneButton: {fileID: 0}
+  emailButton: {fileID: 0}
   debugText: {fileID: 1743578233}
   videoTex: {fileID: 0}
   fadeDuration: 0.15
