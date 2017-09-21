@@ -34,7 +34,6 @@ public class metadataParse : MonoBehaviour {
 	public string emailContact = "none";
 	public string webContact = "none";
 	public string phoneContact = "none";
-
 	public GameObject[] contactButtons;
 	
 	//debugging
