@@ -9,6 +9,26 @@ using UnityEngine.Video;
 using UnityEngine.Networking;
 
 public class metadataParse : MonoBehaviour {
+<<<<<<< HEAD
+
+    //in the dashboard, they'll have the option to put in contact info. 
+    public string emailContact = "null";
+    public string phoneContact = "null";
+    public string webContact = "null";
+
+    public GameObject[] contactButtons;
+
+    //debugging
+    float startTime = 0f;
+    public Text debugText;
+    //path to save target info locally 
+    string streamPath;
+    string targetName;
+
+    analyticsController analyticsControl;
+
+    // unity video player objects
+=======
 	
 	//in the dashboard, they'll have the option to put in contact info. 
 	public string emailContact = "none";
@@ -27,8 +47,9 @@ public class metadataParse : MonoBehaviour {
 	analyticsController analyticsControl;
 	
 	// unity video player objects
+>>>>>>> 6ba4ea3e45072f14cb1f3727c7869e5a902ceec4
     [SerializeField]
-	private RawImage videoTex;
+    private RawImage videoTex;
     [SerializeField]
     float fadeDuration = 0.25f;
     private RawImage videoTex_preview;
@@ -38,23 +59,23 @@ public class metadataParse : MonoBehaviour {
     private string videoFolderLink;
     // access video player anywhere
     public VideoPlayer videoPlayer;
-	public AudioSource audioSource;
+    public AudioSource audioSource;
     // access preview video player anywhere
     public VideoPlayer videoPlayer_preview;
     public AudioSource audioSource_preview;
-    
-	// buttons for video player
+
+    // buttons for video player
     public Image playIcon;
-	public Image pauseIcon;
+    public Image pauseIcon;
 
 
-	public bool isPaused = false;
-	public bool firstRun = true;
+    public bool isPaused = false;
+    public bool firstRun = true;
 
-	public bool pauseVideo = false;
+    public bool pauseVideo = false;
 
 
-	void Start(){
+    void Start(){
 		//local path for phone
 		streamPath = Application.persistentDataPath + "/";
 	#if UNITY_IOS
