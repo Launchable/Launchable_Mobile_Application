@@ -9,6 +9,7 @@ using UnityEngine.Video;
 using UnityEngine.Networking;
 
 public class metadataParse : MonoBehaviour {
+<<<<<<< HEAD
 
     //in the dashboard, they'll have the option to put in contact info. 
     public string emailContact = "null";
@@ -27,6 +28,25 @@ public class metadataParse : MonoBehaviour {
     analyticsController analyticsControl;
 
     // unity video player objects
+=======
+	
+	//in the dashboard, they'll have the option to put in contact info. 
+	public string emailContact = "none";
+	public string webContact = "none";
+	public string phoneContact = "none";
+	public GameObject[] contactButtons;
+	
+	//debugging
+	float startTime = 0f;
+	public Text debugText;
+	//path to save target info locally 
+	string streamPath; 
+	string targetName; 
+
+	analyticsController analyticsControl;
+	
+	// unity video player objects
+>>>>>>> 6ba4ea3e45072f14cb1f3727c7869e5a902ceec4
     [SerializeField]
     private RawImage videoTex;
     [SerializeField]
@@ -151,6 +171,9 @@ public class metadataParse : MonoBehaviour {
 		case "estateEmail":
 			updateEmail(splitMetadata[1]);
 			break;
+		case "estateWebsite":
+			updateWebsite(splitMetadata[1]);
+			break;
 		default:
 			break;
 		}
@@ -164,6 +187,10 @@ public class metadataParse : MonoBehaviour {
 	
 	void updateEmail(string email){
 		emailContact = email;
+	}
+
+	void updateWebsite(string website){
+		webContact = website;
 	}
 
     public void runContactAnimation()

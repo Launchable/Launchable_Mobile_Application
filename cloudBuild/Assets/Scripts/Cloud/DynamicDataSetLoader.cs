@@ -22,6 +22,10 @@ public class DynamicDataSetLoader : MonoBehaviour
     [SerializeField]
     Slider datSlider;
 
+	public bool ready = false;
+	public int numTargets = 0;
+	public int numTargets_Updated = 0;
+
     //private string amazonS3Path = "https://s3-eu-west-1.amazonaws.com/launchables/metadata/main/";
     private string amazonS3Path = "https://s3.us-east-2.amazonaws.com/launchable-mobile-application/";
     private string datasetsDirectory = "Datasets/";
@@ -148,22 +152,34 @@ public class DynamicDataSetLoader : MonoBehaviour
             File.WriteAllBytes(helperSavePath, wwwHelper.bytes);
             StartCoroutine(downloadXML(amazonS3Path + datasetsDirectory + "Launchable_Mobile_Application.xml"));
         }
+		if (numTargets_Updated != numTargets) {
+			debugText.text += numTargets + " " + numTargets_Updated + " Waiting for downloads...\n";
+		} else {
+			ready = true;
+			debugText.text += "Ready to go...\n";
+		}
     }
+
 
 
     void checkMetadata(XmlDocument tempXML, XmlDocument currentXML)
     {
         string targetsPath = "Helper/Targets/ImageTarget";
+		numTargets = tempXML.SelectNodes (targetsPath).Count;
+		debugText.text += numTargets + " " + numTargets_Updated + "\n";
         foreach (XmlElement node in tempXML.SelectNodes(targetsPath))
         {
             XmlElement currentMatch = FindElementByAttribute(currentXML, targetsPath, "name", node.GetAttribute("name"));
             if (node.GetAttribute("version") == currentMatch.GetAttribute("version"))
             {
                 Debug.Log(node.GetAttribute("name") + " is up to date.");
+				debugText.text += node.GetAttribute ("name") + " is up to date. \n";
+				numTargets_Updated++;
             }
             else
             {
                 Debug.Log(node.GetAttribute("name") + " is out of date. Updating...");
+				debugText.text += node.GetAttribute("name") + " is out of date. Updating... \n";
                 string tempFileName = node.GetAttribute("name");
                 tempFileName += ".txt";
                 string tempUrl = amazonS3Path + metadataDirectory + tempFileName;
@@ -210,9 +226,15 @@ public class DynamicDataSetLoader : MonoBehaviour
     {
         //WWW download = WWW.LoadFromCacheOrDownload(url, 1);
         WWW download = new WWW(url);
+		float temp = 0;
         while (!download.isDone)
         {
+			
             progressNum = download.progress * 100;
+			if ((download.progress * 100) > temp + 20) {
+				debugText.text += download.progress * 100 + " at time: " + Time.time + "\n";
+				temp = download.progress * 100;
+			}
             datSlider.value = progressNum;
             yield return null;
         }
@@ -305,6 +327,15 @@ public class DynamicDataSetLoader : MonoBehaviour
             //debugText.text += "loading dataset \n";
             VuforiaARController.Instance.RegisterVuforiaStartedCallback(LoadDataSet);
         }
+
+		if (fileName.Contains(".txt"))
+		{
+			numTargets_Updated++;
+		}
+		if (numTargets_Updated == numTargets) {
+			debugText.text += "Ready to go, from downloadFile...\n";
+			ready = true;
+		}
 
     }
 
